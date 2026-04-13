@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -1503,7 +1505,7 @@ function FooterNavIcon({
   );
 }
 
-export default function ChallengesPage() {
+function ChallengesPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -2714,5 +2716,13 @@ export default function ChallengesPage() {
         />
       )}
     </main>
+  );
+}
+
+export default function ChallengesPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-white">Lädt...</div>}>
+      <ChallengesPageContent />
+    </Suspense>
   );
 }

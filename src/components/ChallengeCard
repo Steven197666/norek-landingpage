@@ -1,0 +1,190 @@
+"use client";
+
+import Link from "next/link";
+
+export type Challenge = {
+  id: string;
+  title: string;
+  description?: string | null;
+  minAmount: number;
+  currentAmount: number;
+  status?: "funding" | "active" | "voting" | "completed" | string;
+  riskLevel?: number | null;
+  is18Plus?: boolean | null;
+  verificationMode?: string | null;
+  requiresLive?: boolean | null;
+  allowRecordedAttempt?: boolean | null;
+};
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function formatMoney(n: number) {
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(Number(n || 0));
+}
+
+function statusLabel(status?: string) {
+  if (status === "funding") return "Funding";
+  if (status === "active") return "Aktiv";
+  if (status === "voting") return "Voting";
+  if (status === "completed") return "Abgeschlossen";
+  return status ? status : "—";
+}
+
+function statusClasses(status?: string) {
+  if (status === "funding") return "border-amber-200 bg-amber-50 text-amber-800";
+  if (status === "active") return "border-blue-200 bg-blue-50 text-blue-800";
+  if (status === "voting") return "border-purple-200 bg-purple-50 text-purple-800";
+  if (status === "completed") return "border-green-200 bg-green-50 text-green-800";
+  return "border-gray-200 bg-gray-50 text-gray-700";
+}
+
+function pillClasses(tone: "neutral" | "danger" | "warning" | "info") {
+  if (tone === "danger") return "border-red-200 bg-red-50 text-red-700";
+  if (tone === "warning") return "border-amber-200 bg-amber-50 text-amber-800";
+  if (tone === "info") return "border-blue-200 bg-blue-50 text-blue-800";
+  return "border-gray-200 bg-gray-50 text-gray-700";
+}
+
+function isLiveRequired(c: Challenge) {
+  if (typeof c.requiresLive === "boolean") return c.requiresLive;
+  const verificationMode = String(c.verificationMode ?? "").toLowerCase();
+  return verificationMode === "live_only";
+}
+
+function allowsRecorded(c: Challenge) {
+  if (typeof c.allowRecordedAttempt === "boolean") return c.allowRecordedAttempt;
+  const verificationMode = String(c.verificationMode ?? "").toLowerCase();
+  return (
+    verificationMode === "recorded_only" ||
+    verificationMode === "live_or_recorded"
+  );
+}
+
+export default function ChallengeCard({ c }: { c: Challenge }) {
+  const min = Number(c.minAmount || 0);
+  const cur = Number(c.currentAmount || 0);
+  const pct = min > 0 ? clamp((cur / min) * 100, 0, 100) : 0;
+
+  const riskLevel = Number(c.riskLevel ?? 0);
+  const liveRequired = isLiveRequired(c);
+  const recordedAllowed = allowsRecorded(c);
+
+  return (
+    <div className="rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="truncate text-lg font-extrabold text-gray-900">{c.title}</div>
+
+          {c.description ? (
+            <div className="mt-1 line-clamp-2 text-sm text-gray-600">{c.description}</div>
+          ) : (
+            <div className="mt-1 text-sm text-gray-400">Keine Beschreibung</div>
+          )}
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            <div
+              className={`rounded-full border px-3 py-1 text-xs font-bold ${statusClasses(
+                c.status
+              )}`}
+            >
+              {statusLabel(c.status)}
+            </div>
+
+            {liveRequired && (
+              <div
+                className={`rounded-full border px-3 py-1 text-xs font-bold ${pillClasses(
+                  "danger"
+                )}`}
+              >
+                🔴 Live Pflicht
+              </div>
+            )}
+
+            {!liveRequired && !recordedAllowed && (
+              <div
+                className={`rounded-full border px-3 py-1 text-xs font-bold ${pillClasses(
+                  "neutral"
+                )}`}
+              >
+                In-App Aufnahme
+              </div>
+            )}
+
+            {recordedAllowed && !liveRequired && (
+              <div
+                className={`rounded-full border px-3 py-1 text-xs font-bold ${pillClasses(
+                  "info"
+                )}`}
+              >
+                Aufnahme erlaubt
+              </div>
+            )}
+
+            {!!c.is18Plus && (
+              <div
+                className={`rounded-full border px-3 py-1 text-xs font-bold ${pillClasses(
+                  "danger"
+                )}`}
+              >
+                🔞 Ab 18
+              </div>
+            )}
+
+            {riskLevel === 1 && (
+              <div
+                className={`rounded-full border px-3 py-1 text-xs font-bold ${pillClasses(
+                  "warning"
+                )}`}
+              >
+                ⚠️ Hinweis
+              </div>
+            )}
+
+            {riskLevel >= 2 && (
+              <div
+                className={`rounded-full border px-3 py-1 text-xs font-bold ${pillClasses(
+                  "danger"
+                )}`}
+              >
+                ⚠️ Hohes Risiko
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-semibold text-gray-700">
+            {formatMoney(cur)} / {min > 0 ? formatMoney(min) : "Kein Ziel"}
+          </span>
+          <span className="font-semibold text-gray-500">
+            {min > 0 ? `${Math.round(pct)}%` : "Offen"}
+          </span>
+        </div>
+
+        <div className="mt-2 h-2 w-full rounded-full bg-gray-100">
+          <div
+            className="h-2 rounded-full bg-black"
+            style={{ width: `${min > 0 ? pct : 0}%` }}
+            aria-label="Progress"
+          />
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        <Link
+          href={`/challenges/${c.id}`}
+          className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
+        >
+          Details
+        </Link>
+      </div>
+    </div>
+  );
+}

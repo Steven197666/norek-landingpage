@@ -604,27 +604,27 @@ function statusClasses(status?: string, result?: string | null) {
   const normalizedResult = String(result ?? "").toLowerCase();
 
   if (normalizedStatus === "funding") {
-    return "border-amber-200 bg-amber-50 text-amber-800";
+    return "border-amber-400/30 bg-amber-400/15 text-amber-100";
   }
   if (normalizedStatus === "active") {
-    return "border-blue-200 bg-blue-50 text-blue-800";
+    return "border-cyan-400/30 bg-cyan-400/15 text-cyan-100";
   }
   if (normalizedStatus === "voting") {
-    return "border-purple-200 bg-purple-50 text-purple-800";
+    return "border-indigo-400/30 bg-indigo-400/15 text-indigo-100";
   }
   if (normalizedStatus === "completed" && normalizedResult === "failed") {
-    return "border-red-200 bg-red-50 text-red-700";
+    return "border-red-500/30 bg-red-500/15 text-red-100";
   }
   if (normalizedStatus === "completed") {
-    return "border-green-200 bg-green-50 text-green-800";
+    return "border-emerald-400/30 bg-emerald-400/15 text-emerald-100";
   }
-  return "border-slate-200 bg-slate-50 text-slate-700";
+  return "border-white/10 bg-white/5 text-slate-300";
 }
 
 function tabClasses(active: boolean) {
   return active
-    ? "rounded-2xl border border-slate-900 bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white"
-    : "rounded-2xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50";
+    ? "rounded-2xl border border-blue-400/30 bg-blue-500/15 px-4 py-2.5 text-sm font-semibold text-blue-100 shadow-[0_0_0_1px_rgba(59,130,246,0.08)]"
+    : "rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-white/[0.06] hover:text-white";
 }
 
 function getCreatorUser(challenge: Challenge): {
@@ -685,7 +685,7 @@ function getCompletedInfo(challenge: Challenge, ui: MyChallengesUi) {
       username: winner.username,
       avatarUrl: winner.avatarUrl,
       className:
-        "rounded-xl border border-green-200 bg-green-50 px-3 py-2 text-sm font-bold text-green-800",
+        "rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-3 py-2 text-sm font-bold text-emerald-100",
     };
   }
 
@@ -696,7 +696,7 @@ function getCompletedInfo(challenge: Challenge, ui: MyChallengesUi) {
       username: null,
       avatarUrl: null,
       className:
-        "rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700",
+        "rounded-xl border border-red-500/30 bg-red-500/15 px-3 py-2 text-sm font-semibold text-red-100",
     };
   }
 
@@ -706,7 +706,7 @@ function getCompletedInfo(challenge: Challenge, ui: MyChallengesUi) {
     username: null,
     avatarUrl: null,
     className:
-      "rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-600",
+      "rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-slate-200",
   };
 }
 
@@ -730,7 +730,7 @@ function getCardHook(
             amount: formatMoneyEUR(remaining, locale),
           }),
           className:
-            "rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800",
+            "rounded-2xl border border-amber-400/30 bg-amber-500/15 px-3 py-2 text-sm font-semibold text-amber-100",
         };
       }
 
@@ -739,14 +739,14 @@ function getCardHook(
           amount: formatMoneyEUR(remaining, locale),
         }),
         className:
-          "rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800",
+          "rounded-2xl border border-amber-400/30 bg-amber-500/15 px-3 py-2 text-sm font-semibold text-amber-100",
         };
     }
 
     return {
       text: ui.fundingHookGeneric,
       className:
-        "rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800",
+        "rounded-2xl border border-amber-400/30 bg-amber-500/15 px-3 py-2 text-sm font-semibold text-amber-100",
     };
   }
 
@@ -754,7 +754,7 @@ function getCardHook(
     return {
       text: ui.activeHook,
       className:
-        "rounded-2xl border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-800",
+        "rounded-2xl border border-cyan-400/30 bg-cyan-500/15 px-3 py-2 text-sm font-semibold text-cyan-100",
     };
   }
 
@@ -762,7 +762,7 @@ function getCardHook(
     return {
       text: ui.votingHook,
       className:
-        "rounded-2xl border border-purple-200 bg-purple-50 px-3 py-2 text-sm font-semibold text-purple-800",
+        "rounded-2xl border border-indigo-400/30 bg-indigo-500/15 px-3 py-2 text-sm font-semibold text-indigo-100",
     };
   }
 
@@ -770,7 +770,7 @@ function getCardHook(
     return {
       text: replaceUiText(ui.completedWinnerHook, { winner }),
       className:
-        "rounded-2xl border border-green-200 bg-green-50 px-3 py-2 text-sm font-semibold text-green-800",
+        "rounded-2xl border border-emerald-400/30 bg-emerald-500/15 px-3 py-2 text-sm font-semibold text-emerald-100",
     };
   }
 
@@ -778,14 +778,14 @@ function getCardHook(
     return {
       text: ui.completedFailedHook,
       className:
-        "rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700",
+        "rounded-2xl border border-red-500/30 bg-red-500/15 px-3 py-2 text-sm font-semibold text-red-100",
     };
   }
 
   return {
     text: ui.fallbackHook,
     className:
-      "rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700",
+      "rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-slate-200",
   };
 }
 
@@ -811,7 +811,7 @@ function getMomentumBadge(challenge: Challenge, ui: MyChallengesUi) {
       return {
         label: ui.badgeReady,
         className:
-          "rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-bold text-green-800",
+          "rounded-full border border-emerald-400/30 bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-100",
       };
     }
 
@@ -819,14 +819,14 @@ function getMomentumBadge(challenge: Challenge, ui: MyChallengesUi) {
       return {
         label: ui.badgeAlmostThere,
         className:
-          "rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800",
+          "rounded-full border border-amber-400/30 bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-100",
       };
     }
 
     return {
       label: ui.badgeBuilding,
       className:
-        "rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-700",
+        "rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-bold text-slate-300",
     };
   }
 
@@ -834,7 +834,7 @@ function getMomentumBadge(challenge: Challenge, ui: MyChallengesUi) {
     return {
       label: ui.badgeLiveForParticipants,
       className:
-        "rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-800",
+        "rounded-full border border-cyan-400/30 bg-cyan-500/15 px-3 py-1 text-xs font-bold text-cyan-100",
     };
   }
 
@@ -842,7 +842,7 @@ function getMomentumBadge(challenge: Challenge, ui: MyChallengesUi) {
     return {
       label: ui.badgeCommunityDecides,
       className:
-        "rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-bold text-purple-800",
+        "rounded-full border border-indigo-400/30 bg-indigo-500/15 px-3 py-1 text-xs font-bold text-indigo-100",
     };
   }
 
@@ -850,7 +850,7 @@ function getMomentumBadge(challenge: Challenge, ui: MyChallengesUi) {
     return {
       label: ui.badgeFinalResult,
       className:
-        "rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-bold text-green-800",
+        "rounded-full border border-emerald-400/30 bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-100",
     };
   }
 
@@ -864,88 +864,88 @@ function getCardFrameClasses(challenge: Challenge) {
   if (status === "funding") {
     return {
       outer:
-        "group overflow-hidden rounded-[26px] border border-amber-200/70 bg-white shadow-xl ring-1 ring-amber-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl",
+        "group overflow-hidden rounded-[26px] border border-amber-400/25 bg-[#0A1222] shadow-[0_20px_50px_rgba(0,0,0,0.35)] ring-1 ring-amber-400/10 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(0,0,0,0.45)]",
       top:
-        "border-b border-amber-100 bg-gradient-to-br from-amber-50 via-white to-amber-100/60 px-5 py-4",
+        "border-b border-amber-400/20 bg-gradient-to-br from-amber-500/10 via-transparent to-amber-300/5 px-5 py-4",
       body: "p-4",
-      stat: "rounded-2xl border border-amber-200 bg-amber-50/70 p-3.5",
+      stat: "rounded-2xl border border-amber-400/25 bg-amber-500/10 p-3.5",
       progressWrap:
-        "mt-3 rounded-2xl border border-amber-200 bg-amber-50/60 p-3.5",
-      footer: "mt-3 border-t border-amber-100 pt-3",
-      accent: "bg-amber-500",
+        "mt-3 rounded-2xl border border-amber-400/25 bg-amber-500/10 p-3.5",
+      footer: "mt-3 border-t border-amber-400/20 pt-3",
+      accent: "bg-amber-400",
     };
   }
 
   if (status === "active") {
     return {
       outer:
-        "group overflow-hidden rounded-[26px] border border-blue-200/70 bg-white shadow-xl ring-1 ring-blue-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl",
+        "group overflow-hidden rounded-[26px] border border-cyan-400/25 bg-[#0A1222] shadow-[0_20px_50px_rgba(0,0,0,0.35)] ring-1 ring-cyan-400/10 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(0,0,0,0.45)]",
       top:
-        "border-b border-blue-100 bg-gradient-to-br from-blue-50 via-white to-cyan-100/60 px-5 py-4",
+        "border-b border-cyan-400/20 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-400/5 px-5 py-4",
       body: "p-4",
-      stat: "rounded-2xl border border-blue-200 bg-blue-50/70 p-3.5",
+      stat: "rounded-2xl border border-cyan-400/25 bg-cyan-500/10 p-3.5",
       progressWrap:
-        "mt-3 rounded-2xl border border-blue-200 bg-blue-50/60 p-3.5",
-      footer: "mt-3 border-t border-blue-100 pt-3",
-      accent: "bg-blue-500",
+        "mt-3 rounded-2xl border border-cyan-400/25 bg-cyan-500/10 p-3.5",
+      footer: "mt-3 border-t border-cyan-400/20 pt-3",
+      accent: "bg-cyan-400",
     };
   }
 
   if (status === "voting") {
     return {
       outer:
-        "group overflow-hidden rounded-[26px] border border-purple-200/70 bg-white shadow-xl ring-1 ring-purple-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl",
+        "group overflow-hidden rounded-[26px] border border-indigo-400/25 bg-[#0A1222] shadow-[0_20px_50px_rgba(0,0,0,0.35)] ring-1 ring-indigo-400/10 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(0,0,0,0.45)]",
       top:
-        "border-b border-purple-100 bg-gradient-to-br from-purple-50 via-white to-fuchsia-100/60 px-5 py-4",
+        "border-b border-indigo-400/20 bg-gradient-to-br from-indigo-500/10 via-transparent to-sky-400/5 px-5 py-4",
       body: "p-4",
-      stat: "rounded-2xl border border-purple-200 bg-purple-50/70 p-3.5",
+      stat: "rounded-2xl border border-indigo-400/25 bg-indigo-500/10 p-3.5",
       progressWrap:
-        "mt-3 rounded-2xl border border-purple-200 bg-purple-50/60 p-3.5",
-      footer: "mt-3 border-t border-purple-100 pt-3",
-      accent: "bg-purple-500",
+        "mt-3 rounded-2xl border border-indigo-400/25 bg-indigo-500/10 p-3.5",
+      footer: "mt-3 border-t border-indigo-400/20 pt-3",
+      accent: "bg-indigo-400",
     };
   }
 
   if (status === "completed" && result === "failed") {
     return {
       outer:
-        "group overflow-hidden rounded-[26px] border border-red-200/70 bg-white shadow-xl ring-1 ring-red-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl",
+        "group overflow-hidden rounded-[26px] border border-red-400/25 bg-[#0A1222] shadow-[0_20px_50px_rgba(0,0,0,0.35)] ring-1 ring-red-400/10 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(0,0,0,0.45)]",
       top:
-        "border-b border-red-100 bg-gradient-to-br from-red-50 via-white to-rose-100/60 px-5 py-4",
+        "border-b border-red-400/20 bg-gradient-to-br from-red-500/10 via-transparent to-rose-400/5 px-5 py-4",
       body: "p-4",
-      stat: "rounded-2xl border border-red-200 bg-red-50/70 p-3.5",
+      stat: "rounded-2xl border border-red-400/25 bg-red-500/10 p-3.5",
       progressWrap:
-        "mt-3 rounded-2xl border border-red-200 bg-red-50/60 p-3.5",
-      footer: "mt-3 border-t border-red-100 pt-3",
-      accent: "bg-red-500",
+        "mt-3 rounded-2xl border border-red-400/25 bg-red-500/10 p-3.5",
+      footer: "mt-3 border-t border-red-400/20 pt-3",
+      accent: "bg-red-400",
     };
   }
 
   if (status === "completed") {
     return {
       outer:
-        "group overflow-hidden rounded-[26px] border border-green-200/70 bg-white shadow-xl ring-1 ring-green-100 transition duration-300 hover:-translate-y-1 hover:shadow-2xl",
+        "group overflow-hidden rounded-[26px] border border-emerald-400/25 bg-[#0A1222] shadow-[0_20px_50px_rgba(0,0,0,0.35)] ring-1 ring-emerald-400/10 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(0,0,0,0.45)]",
       top:
-        "border-b border-green-100 bg-gradient-to-br from-green-50 via-white to-emerald-100/60 px-5 py-4",
+        "border-b border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-transparent to-green-400/5 px-5 py-4",
       body: "p-4",
-      stat: "rounded-2xl border border-green-200 bg-green-50/70 p-3.5",
+      stat: "rounded-2xl border border-emerald-400/25 bg-emerald-500/10 p-3.5",
       progressWrap:
-        "mt-3 rounded-2xl border border-green-200 bg-green-50/60 p-3.5",
-      footer: "mt-3 border-t border-green-100 pt-3",
-      accent: "bg-green-500",
+        "mt-3 rounded-2xl border border-emerald-400/25 bg-emerald-500/10 p-3.5",
+      footer: "mt-3 border-t border-emerald-400/20 pt-3",
+      accent: "bg-emerald-400",
     };
   }
 
   return {
     outer:
-      "group overflow-hidden rounded-[26px] border border-white/10 bg-white shadow-xl ring-1 ring-black/5 transition duration-300 hover:-translate-y-1 hover:shadow-2xl",
+      "group overflow-hidden rounded-[26px] border border-white/10 bg-[#0A1222] shadow-[0_20px_50px_rgba(0,0,0,0.35)] ring-1 ring-white/5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(0,0,0,0.45)]",
     top:
-      "border-b border-slate-100 bg-gradient-to-br from-slate-50 via-white to-slate-100/70 px-5 py-4",
+      "border-b border-white/10 bg-gradient-to-br from-white/[0.04] via-transparent to-slate-500/5 px-5 py-4",
     body: "p-4",
-    stat: "rounded-2xl border border-slate-200 bg-slate-50 p-3.5",
-    progressWrap: "mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3.5",
-    footer: "mt-3 border-t border-slate-100 pt-3",
-    accent: "bg-slate-500",
+    stat: "rounded-2xl border border-white/10 bg-white/[0.04] p-3.5",
+    progressWrap: "mt-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3.5",
+    footer: "mt-3 border-t border-white/10 pt-3",
+    accent: "bg-slate-300",
   };
 }
 
@@ -1118,14 +1118,14 @@ export default function MyChallengesPage() {
   }, [items, filter, q, sort]);
 
   return (
-    <main className="min-h-[calc(100vh-64px)] bg-slate-950">
-      <div className="mx-auto max-w-6xl p-6">
+    <main className="min-h-screen min-h-dvh bg-slate-950">
+      <div className="mx-auto max-w-6xl p-4 sm:p-6">
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <div className="mb-8 overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-6 shadow-2xl sm:p-8">
+          <div className="mb-8 overflow-hidden rounded-[32px] border border-blue-500/10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.18),transparent_30%),linear-gradient(135deg,#050B17_0%,#09101D_55%,#0B1322_100%)] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:p-8">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0 max-w-3xl">
                 <span className="inline-flex rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-amber-300">
@@ -1142,14 +1142,14 @@ export default function MyChallengesPage() {
 
                 {!loading && !error && (
                   <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-300">
-                    <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+                    <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
                       {ui.ownChallenges}:{" "}
                       <span className="font-semibold text-white">{counts.all}</span>
                     </div>
-                    <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+                    <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
                       {ui.totalFunding}: {formatMoneyEUR(totalCurrent, activeLocale)}
                     </div>
-                    <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
+                    <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
                       {ui.totalGoals}: {formatMoneyEUR(totalGoals, activeLocale)}
                     </div>
                   </div>
@@ -1187,7 +1187,7 @@ export default function MyChallengesPage() {
                 className={tabClasses(filter === "all")}
               >
                 {ui.all}
-                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold">
+                <span className="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold text-white">
                   {counts.all}
                 </span>
               </button>
@@ -1197,7 +1197,7 @@ export default function MyChallengesPage() {
                 className={tabClasses(filter === "funding")}
               >
                 {ui.funding}
-                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold">
+                <span className="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold text-white">
                   {counts.funding}
                 </span>
               </button>
@@ -1207,7 +1207,7 @@ export default function MyChallengesPage() {
                 className={tabClasses(filter === "active")}
               >
                 {ui.active}
-                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold">
+                <span className="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold text-white">
                   {counts.active}
                 </span>
               </button>
@@ -1217,7 +1217,7 @@ export default function MyChallengesPage() {
                 className={tabClasses(filter === "voting")}
               >
                 {ui.voting}
-                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold">
+                <span className="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold text-white">
                   {counts.voting}
                 </span>
               </button>
@@ -1227,7 +1227,7 @@ export default function MyChallengesPage() {
                 className={tabClasses(filter === "completed")}
               >
                 {ui.completed}
-                <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold">
+                <span className="ml-2 rounded-full bg-white/15 px-2 py-0.5 text-xs font-bold text-white">
                   {counts.completed}
                 </span>
               </button>
@@ -1243,22 +1243,22 @@ export default function MyChallengesPage() {
                 delay: 0.12,
                 ease: "easeOut",
               }}
-              className="mb-6 rounded-[28px] border border-white/10 bg-white p-4 shadow-2xl ring-1 ring-black/5"
+              className="mb-6 rounded-[28px] border border-white/10 bg-[#0B1322] p-4 shadow-[0_20px_50px_rgba(0,0,0,0.35)] ring-1 ring-white/5"
             >
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex min-w-[240px] flex-1 flex-col gap-2 sm:flex-row sm:items-center">
-                  <div className="text-sm font-semibold text-slate-600">{ui.search}</div>
+                  <div className="text-sm font-semibold text-slate-300">{ui.search}</div>
                   <div className="flex w-full items-center gap-2">
                     <input
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
                       placeholder={ui.searchPlaceholder}
-                      className="h-12 w-full rounded-2xl border border-slate-300 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-700 focus:ring-4 focus:ring-teal-100"
+                      className="h-12 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400/30 focus:ring-4 focus:ring-blue-500/10"
                     />
                     {searchInput.trim() && (
                       <button
                         onClick={() => setSearchInput("")}
-                        className="inline-flex h-12 items-center justify-center rounded-2xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+                        className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-semibold text-slate-200 transition hover:bg-white/[0.08]"
                         title={ui.clearSearch}
                         type="button"
                       >
@@ -1269,13 +1269,13 @@ export default function MyChallengesPage() {
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <div className="text-sm font-semibold text-slate-600">
+                  <div className="text-sm font-semibold text-slate-300">
                     {ui.sort}
                   </div>
                   <select
                     value={sort}
                     onChange={(e) => setSort(e.target.value as SortKey)}
-                    className="h-12 rounded-2xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 outline-none transition focus:border-teal-700 focus:ring-4 focus:ring-teal-100"
+                    className="h-12 rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-semibold text-white outline-none transition focus:border-blue-400/30 focus:ring-4 focus:ring-blue-500/10"
                   >
                     <option value="newest">{ui.newest}</option>
                     <option value="title_asc">{ui.titleAsc}</option>
@@ -1299,19 +1299,19 @@ export default function MyChallengesPage() {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="overflow-hidden rounded-[24px] border border-white/10 bg-white p-5 shadow-xl ring-1 ring-black/5"
+                  className="overflow-hidden rounded-[24px] border border-white/10 bg-[#0A1222] p-5 shadow-xl ring-1 ring-white/5"
                 >
                   <div className="animate-pulse">
-                    <div className="aspect-[16/9] rounded-2xl bg-slate-200" />
-                    <div className="mt-4 h-6 w-24 rounded-full bg-slate-200" />
-                    <div className="mt-4 h-8 w-3/4 rounded bg-slate-200" />
-                    <div className="mt-3 h-4 w-1/3 rounded bg-slate-200" />
-                    <div className="mt-4 h-4 w-full rounded bg-slate-200" />
-                    <div className="mt-2 h-4 w-5/6 rounded bg-slate-200" />
+                    <div className="aspect-[16/9] rounded-2xl bg-slate-700/60" />
+                    <div className="mt-4 h-6 w-24 rounded-full bg-slate-700/60" />
+                    <div className="mt-4 h-8 w-3/4 rounded bg-slate-700/60" />
+                    <div className="mt-3 h-4 w-1/3 rounded bg-slate-700/60" />
+                    <div className="mt-4 h-4 w-full rounded bg-slate-700/60" />
+                    <div className="mt-2 h-4 w-5/6 rounded bg-slate-700/60" />
                     <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                      <div className="h-20 rounded-2xl bg-slate-200" />
-                      <div className="h-20 rounded-2xl bg-slate-200" />
-                      <div className="h-20 rounded-2xl bg-slate-200" />
+                      <div className="h-20 rounded-2xl bg-slate-700/60" />
+                      <div className="h-20 rounded-2xl bg-slate-700/60" />
+                      <div className="h-20 rounded-2xl bg-slate-700/60" />
                     </div>
                   </div>
                 </div>
@@ -1320,19 +1320,19 @@ export default function MyChallengesPage() {
           )}
 
           {!loading && !error && preparedItems.length === 0 && (
-            <div className="rounded-3xl border border-white/10 bg-white p-8 text-center shadow-2xl">
-              <div className="mb-2 text-xl font-extrabold text-slate-900">
+            <div className="rounded-3xl border border-white/10 bg-[#0B1322] p-8 text-center shadow-2xl ring-1 ring-white/5">
+              <div className="mb-2 text-xl font-extrabold text-white">
                 {ui.noOwnChallengesTitle}
               </div>
-              <p className="text-slate-600">
+              <p className="text-slate-300">
                 {ui.noOwnChallengesText}
               </p>
             </div>
           )}
 
           {!loading && error && (
-            <div className="rounded-3xl border border-red-200 bg-red-50 p-6 shadow-sm">
-              <p className="font-semibold text-red-700">{error}</p>
+            <div className="rounded-3xl border border-red-500/30 bg-red-500/10 p-6 shadow-sm">
+              <p className="font-semibold text-red-100">{error}</p>
               <div className="mt-4">
                 <PrimaryButton type="button" variant="dark" onClick={loadMine}>
                   {ui.tryAgain}
@@ -1477,7 +1477,7 @@ export default function MyChallengesPage() {
                             ) : null}
 
                             {String(c.status).toLowerCase() === "voting" ? (
-                              <div className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-bold text-purple-800">
+                              <div className="rounded-full border border-indigo-400/30 bg-indigo-500/15 px-3 py-1 text-xs font-bold text-indigo-100">
                                 {ui.inVoting}
                               </div>
                             ) : null}
@@ -1485,7 +1485,7 @@ export default function MyChallengesPage() {
 
                           <div className="mt-2">
                             {creator.username ? (
-                              <div className="flex items-center gap-2 text-sm text-slate-600">
+                              <div className="flex items-center gap-2 text-sm text-slate-200">
                                 <span className="text-slate-400">{ui.by}</span>
                                 <UserLink
                                   username={creator.username}
@@ -1501,7 +1501,7 @@ export default function MyChallengesPage() {
                             )}
                           </div>
 
-                          <div className="mt-3 min-h-[44px] text-sm leading-6 text-slate-600">
+                          <div className="mt-3 min-h-[44px] text-sm leading-6 text-slate-300">
                             {hasDescription ? (
                               <div className="line-clamp-2 break-words">
                                 {trimmedDescription}
@@ -1517,7 +1517,7 @@ export default function MyChallengesPage() {
                             {cardHook.text}
                           </div>
 
-                          <div className="mt-2 text-xs leading-5 text-slate-500">
+                          <div className="mt-2 text-xs leading-5 text-slate-400">
                             {cardMiniExplanation}
                           </div>
                         </div>
@@ -1536,28 +1536,28 @@ export default function MyChallengesPage() {
                     <div className={frame.body}>
                       <div className="grid gap-3 sm:grid-cols-3">
                         <div className={frame.stat}>
-                          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
                             {ui.currentAmount}
                           </div>
-                          <div className="mt-1.5 text-lg font-extrabold text-slate-900">
+                          <div className="mt-1.5 text-lg font-extrabold text-white">
                             {formatMoneyEUR(current, activeLocale)}
                           </div>
                         </div>
 
                         <div className={frame.stat}>
-                          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
                             {ui.goal}
                           </div>
-                          <div className="mt-1.5 text-lg font-extrabold text-slate-900">
+                          <div className="mt-1.5 text-lg font-extrabold text-white">
                             {hasGoal ? formatMoneyEUR(goal, activeLocale) : ui.noGoal}
                           </div>
                         </div>
 
                         <div className={frame.stat}>
-                          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
                             {ui.supporters}
                           </div>
-                          <div className="mt-1.5 text-lg font-extrabold text-slate-900">
+                          <div className="mt-1.5 text-lg font-extrabold text-white">
                             {supporterCount}
                           </div>
                         </div>
@@ -1566,15 +1566,15 @@ export default function MyChallengesPage() {
                       {hasGoal ? (
                         <div className={frame.progressWrap}>
                           <div className="mb-2 flex items-center justify-between text-sm">
-                            <span className="font-semibold text-slate-700">
+                            <span className="font-semibold text-slate-200">
                               {ui.progress}
                             </span>
-                            <span className="font-semibold text-slate-500">
+                            <span className="font-semibold text-slate-400">
                               {Math.round(pctRaw)}%
                             </span>
                           </div>
 
-                          <div className="h-2.5 w-full rounded-full bg-white/80 ring-1 ring-black/5">
+                          <div className="h-2.5 w-full rounded-full bg-white/10 ring-1 ring-white/10">
                             <div
                               className={`h-2.5 rounded-full transition-all ${frame.accent}`}
                               style={{ width: `${pctBar}%` }}
@@ -1584,18 +1584,18 @@ export default function MyChallengesPage() {
 
                           <div className="mt-3 flex flex-wrap gap-2">
                             {!startReached && remainingToStart != null ? (
-                              <div className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-extrabold text-amber-800">
+                              <div className="rounded-full border border-amber-400/30 bg-amber-500/15 px-3 py-1 text-xs font-extrabold text-amber-100">
                                 {replaceUiText(ui.leftToGoal, {
                                   amount: formatMoneyEUR(remainingToStart, activeLocale),
                                 })}
                               </div>
                             ) : (
-                              <div className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-extrabold text-green-800">
+                              <div className="rounded-full border border-emerald-400/30 bg-emerald-500/15 px-3 py-1 text-xs font-extrabold text-emerald-100">
                                 {ui.goalReached}
                               </div>
                             )}
 
-                            <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-extrabold text-slate-700">
+                            <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-extrabold text-slate-200">
                               {replaceUiText(ui.supportersShort, { count: supporterCount })}
                             </div>
                           </div>
@@ -1613,7 +1613,7 @@ export default function MyChallengesPage() {
                                   username={completedInfo.username}
                                   avatarUrl={completedInfo.avatarUrl}
                                   avatarSize={28}
-                                  className="text-green-800"
+                                  className="text-emerald-100"
                                 />
                               </div>
                             </div>

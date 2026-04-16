@@ -8,6 +8,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { apiJson } from "@/lib/api";
+import { toPublicProfilePath } from "@/lib/profile-route";
 import { Toast } from "@/components/Toast";
 import MobileChallengesOverview from "@/components/mobile/MobileChallengesOverview";
 import PrimaryButton from "@/components/ui/PrimaryButton";
@@ -111,6 +112,36 @@ function asUserRef(value: unknown): ChallengeUserRef | null {
   };
 }
 
+function asOwnerRefFromFlatRecord(
+  record: Record<string, unknown>
+): ChallengeUserRef | null {
+  const username =
+    asString(record.owner_username) ??
+    asString(record.creator_username) ??
+    asString(record.ownerUsername) ??
+    asString(record.creatorUsername);
+
+  const avatarUrl =
+    asString(record.owner_avatar_url) ??
+    asString(record.ownerAvatarUrl) ??
+    asString(record.creator_avatar_url) ??
+    asString(record.creatorAvatarUrl);
+
+  const ownerId =
+    asString(record.owner_id) ??
+    asString(record.ownerId) ??
+    asString(record.creator_id) ??
+    asString(record.creatorId);
+
+  if (!username && !avatarUrl && !ownerId) return null;
+
+  return {
+    id: ownerId ?? `owner:${username ?? "unknown"}`,
+    username: username ?? undefined,
+    avatarUrl: avatarUrl ?? undefined,
+  };
+}
+
 function normalizeChallengeFromApi(item: Challenge): Challenge {
   const record = item as Challenge & Record<string, unknown>;
 
@@ -149,7 +180,8 @@ function normalizeChallengeFromApi(item: Challenge): Challenge {
     item.owner ??
     asUserRef(record.owner) ??
     asUserRef(record.Owner) ??
-    asUserRef(record.creator);
+    asUserRef(record.creator) ??
+    asOwnerRefFromFlatRecord(record);
 
   return {
     ...item,
@@ -1259,6 +1291,20 @@ function getSupporterCount(challenge: Challenge): number | null {
   return null;
 }
 
+function getCreatorUser(challenge: Challenge): { username: string | null } {
+  const ref = challenge.owner ?? challenge.Owner ?? challenge.creator ?? null;
+  const username = ref?.username ?? null;
+
+  if (!username || typeof username !== "string") {
+    return { username: null };
+  }
+
+  const cleaned = username.trim();
+  return {
+    username: cleaned.length > 0 ? cleaned : null,
+  };
+}
+
 function mapSortToBackend(sort: SortKey): string {
   if (sort === "title_asc") return "title_asc";
   if (sort === "progress_desc") return "progress_desc";
@@ -2287,6 +2333,10 @@ function ChallengesPageContent() {
                     activeLocale
                   );
                   const supporterCount = getSupporterCount(c);
+                  const creator = getCreatorUser(c);
+                  const creatorHandle = creator.username
+                    ? creator.username.replace(/^@/, "").trim()
+                    : "";
                   const trimmedDescription = localizedDescription.trim();
                   const hasDescription = trimmedDescription.length > 0;
 
@@ -2299,7 +2349,17 @@ function ChallengesPageContent() {
                   const hasOnlineVideo = challengeHasOnlineVideo(c);
 
                   return (
-                    <Link key={c.id} href={cardCta.href} className="block">
+                    <Link
+                      key={c.id}
+                      href={cardCta.href}
+                      className="block"
+                      onClick={(e) => {
+                        const target = e.target as HTMLElement | null;
+                        if (target?.closest("[data-profile-link='true']")) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
                       <motion.div
                         initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -2472,6 +2532,30 @@ function ChallengesPageContent() {
                                     year: "numeric",
                                   })
                                 : null}
+                            </div>
+                            <div className="mt-1 line-clamp-1 text-xs text-slate-400">
+                              {ui.by}:{" "}
+                              {creatorHandle ? (
+                                <button
+                                  type="button"
+                                  data-profile-link="true"
+                                  className="font-semibold text-slate-200 underline decoration-slate-500/60 underline-offset-2 transition hover:text-white"
+                                  onPointerDown={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    const target = toPublicProfilePath(creatorHandle);
+                                    if (target) router.push(target);
+                                  }}
+                                >
+                                  @{creatorHandle}
+                                </button>
+                              ) : (
+                                ui.creatorUnknown
+                              )}
                             </div>
                           </div>
 

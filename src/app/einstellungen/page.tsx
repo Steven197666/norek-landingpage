@@ -1,5 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
+
+/* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -20,12 +21,17 @@ type MeResponse = {
   username: string;
   role?: string;
   avatarUrl?: string | null;
+  slogan?: string | null;
   isAdultVerified?: boolean;
   dateOfBirth?: string | null;
   notifyEmailChallengeUpdates?: boolean;
   notifyEmailPayoutUpdates?: boolean;
   notifyPushLiveEvents?: boolean;
   notifyMarketingNews?: boolean;
+  stripeAccountId?: string | null;
+  stripeOnboardingComplete?: boolean;
+  stripeOnboardingCompletedAt?: string | null;
+  stripePayoutsEnabled?: boolean;
 };
 
 type WalletOverview = {
@@ -167,6 +173,7 @@ export default function SettingsPage() {
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [slogan, setSlogan] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
 
   const [activeLocale, setActiveLocale] = useState<ChallengeLocale>("de");
@@ -183,36 +190,6 @@ export default function SettingsPage() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [pushStatusText, setPushStatusText] = useState("Push wird geprüft...");
   const [sendingTestPush, setSendingTestPush] = useState(false);
-
-  const refreshPushStatus = useCallback(async () => {
-    if (!isPushSupported()) {
-      setPushStatusText("Push auf diesem Gerät/Browser nicht verfügbar");
-      return;
-    }
-
-    try {
-      const statusRes = await apiFetch("/notifications/push/status", { method: "GET" }, true);
-      if (!statusRes.ok) {
-        setPushStatusText(`Push verfügbar (${Notification.permission})`);
-        return;
-      }
-
-      const data = (await statusRes.json()) as PushStatusResponse;
-      const active = Number(data.activeSubscriptions ?? 0);
-      const enabled = data.pushEnabled !== false;
-
-      if (!enabled) {
-        setPushStatusText("Push-Server nicht konfiguriert");
-        return;
-      }
-
-      setPushStatusText(
-        `Push verfügbar (${Notification.permission}) · aktive Geräte: ${active}`
-      );
-    } catch {
-      setPushStatusText(`Push verfügbar (${Notification.permission})`);
-    }
-  }, []);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -235,6 +212,40 @@ export default function SettingsPage() {
     router.replace("/auth/login");
   }, [router]);
 
+  const refreshPushStatus = useCallback(async () => {
+    if (!isPushSupported()) {
+      setPushStatusText("Push auf diesem Gerät/Browser nicht verfügbar");
+      return;
+    }
+
+    try {
+      const statusRes = await apiFetch(
+        "/notifications/push/status",
+        { method: "GET" },
+        true
+      );
+      if (!statusRes.ok) {
+        setPushStatusText(`Push verfügbar (${Notification.permission})`);
+        return;
+      }
+
+      const data = (await statusRes.json()) as PushStatusResponse;
+      const active = Number(data.activeSubscriptions ?? 0);
+      const enabled = data.pushEnabled !== false;
+
+      if (!enabled) {
+        setPushStatusText("Push-Server nicht konfiguriert");
+        return;
+      }
+
+      setPushStatusText(
+        `Push verfügbar (${Notification.permission}) · aktive Geräte: ${active}`
+      );
+    } catch {
+      setPushStatusText(`Push verfügbar (${Notification.permission})`);
+    }
+  }, []);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -246,7 +257,9 @@ export default function SettingsPage() {
       ]);
 
       if (!meRes.ok) {
-        setError(await getApiErrorMessage(meRes, "Profil konnte nicht geladen werden."));
+        setError(
+          await getApiErrorMessage(meRes, "Profil konnte nicht geladen werden.")
+        );
         return;
       }
 
@@ -254,6 +267,7 @@ export default function SettingsPage() {
       setMe(meData);
       setUsername(meData.username ?? "");
       setEmail(meData.email ?? "");
+      setSlogan(meData.slogan ?? "");
       setDateOfBirth(meData.dateOfBirth ?? "");
       setNotifications({
         emailChallengeUpdates: meData.notifyEmailChallengeUpdates ?? true,
@@ -277,7 +291,10 @@ export default function SettingsPage() {
         localStorage.setItem("dp_role", meData.role);
       }
     } catch (e: unknown) {
-      const msg = getUnknownErrorMessage(e, "Profil konnte nicht geladen werden.");
+      const msg = getUnknownErrorMessage(
+        e,
+        "Profil konnte nicht geladen werden."
+      );
       if (msg.includes("NO_TOKEN") || msg.includes("UNAUTHORIZED")) {
         logout();
         return;
@@ -290,7 +307,6 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setActiveLocale(getActiveChallengeLocale());
-
     loadData();
     refreshPushStatus();
   }, [loadData, refreshPushStatus]);
@@ -309,6 +325,7 @@ export default function SettingsPage() {
           body: JSON.stringify({
             username: username.trim(),
             email: email.trim(),
+            slogan: slogan.trim() ? slogan.trim() : null,
             dateOfBirth: dateOfBirth.trim() ? dateOfBirth.trim() : null,
           }),
         },
@@ -316,7 +333,12 @@ export default function SettingsPage() {
       );
 
       if (!res.ok) {
-        setError(await getApiErrorMessage(res, "Einstellungen konnten nicht gespeichert werden."));
+        setError(
+          await getApiErrorMessage(
+            res,
+            "Einstellungen konnten nicht gespeichert werden."
+          )
+        );
         return;
       }
 
@@ -324,8 +346,11 @@ export default function SettingsPage() {
       setMe(data);
       setUsername(data.username ?? "");
       setEmail(data.email ?? "");
+      setSlogan(data.slogan ?? "");
       setDateOfBirth(data.dateOfBirth ?? "");
-      setSuccess("Profil, Benutzername, E-Mail und Geburtsdatum gespeichert.");
+      setSuccess(
+        "Profil, Slogan, Benutzername, E-Mail und Geburtsdatum gespeichert."
+      );
 
       localStorage.setItem("dp_username", data.username ?? "");
       if (data.avatarUrl) {
@@ -337,7 +362,10 @@ export default function SettingsPage() {
         localStorage.setItem("dp_role", data.role);
       }
     } catch (e: unknown) {
-      const msg = getUnknownErrorMessage(e, "Einstellungen konnten nicht gespeichert werden.");
+      const msg = getUnknownErrorMessage(
+        e,
+        "Einstellungen konnten nicht gespeichert werden."
+      );
       if (msg.includes("NO_TOKEN") || msg.includes("UNAUTHORIZED")) {
         logout();
         return;
@@ -351,7 +379,9 @@ export default function SettingsPage() {
   async function handleAvatarChange(file?: File | null) {
     if (!file) return;
 
-    const isAllowed = ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+    const isAllowed = ["image/jpeg", "image/png", "image/webp"].includes(
+      file.type
+    );
     if (!isAllowed) {
       setError("Nur JPG, PNG oder WEBP erlaubt.");
       return;
@@ -380,7 +410,12 @@ export default function SettingsPage() {
       );
 
       if (!res.ok) {
-        setError(await getApiErrorMessage(res, "Profilbild konnte nicht gespeichert werden."));
+        setError(
+          await getApiErrorMessage(
+            res,
+            "Profilbild konnte nicht gespeichert werden."
+          )
+        );
         return;
       }
 
@@ -394,7 +429,10 @@ export default function SettingsPage() {
         localStorage.removeItem("dp_avatar_url");
       }
     } catch (e: unknown) {
-      const msg = getUnknownErrorMessage(e, "Profilbild konnte nicht gespeichert werden.");
+      const msg = getUnknownErrorMessage(
+        e,
+        "Profilbild konnte nicht gespeichert werden."
+      );
       if (msg.includes("NO_TOKEN") || msg.includes("UNAUTHORIZED")) {
         logout();
         return;
@@ -465,14 +503,18 @@ export default function SettingsPage() {
 
         if (pushResult.ok) {
           await refreshPushStatus();
-          setSuccess("Benachrichtigungseinstellungen gespeichert und Push aktiviert.");
+          setSuccess(
+            "Benachrichtigungseinstellungen gespeichert und Push aktiviert."
+          );
         } else if (pushResult.reason === "PERMISSION_DENIED") {
           setPushStatusText("Push-Berechtigung verweigert");
           setSuccess(
             "Benachrichtigungseinstellungen gespeichert. Für Push bitte Browser-Berechtigung erlauben."
           );
         } else {
-          setPushStatusText(`Push nicht aktiv (${pushResult.reason || "unknown"})`);
+          setPushStatusText(
+            `Push nicht aktiv (${pushResult.reason || "unknown"})`
+          );
           setSuccess(
             "Benachrichtigungseinstellungen gespeichert. Push konnte auf diesem Gerät noch nicht aktiviert werden."
           );
@@ -534,7 +576,11 @@ export default function SettingsPage() {
   }
 
   async function changePassword() {
-    if (!currentPassword.trim() || !newPassword.trim() || !confirmNewPassword.trim()) {
+    if (
+      !currentPassword.trim() ||
+      !newPassword.trim() ||
+      !confirmNewPassword.trim()
+    ) {
       setError("Bitte alle Passwort-Felder ausfüllen.");
       return;
     }
@@ -563,7 +609,9 @@ export default function SettingsPage() {
       );
 
       if (!res.ok) {
-        setError(await getApiErrorMessage(res, "Passwort konnte nicht geändert werden."));
+        setError(
+          await getApiErrorMessage(res, "Passwort konnte nicht geändert werden.")
+        );
         return;
       }
 
@@ -572,7 +620,10 @@ export default function SettingsPage() {
       setConfirmNewPassword("");
       setSuccess("Passwort geändert.");
     } catch (e: unknown) {
-      const msg = getUnknownErrorMessage(e, "Passwort konnte nicht geändert werden.");
+      const msg = getUnknownErrorMessage(
+        e,
+        "Passwort konnte nicht geändert werden."
+      );
       if (msg.includes("NO_TOKEN") || msg.includes("UNAUTHORIZED")) {
         logout();
         return;
@@ -606,7 +657,9 @@ export default function SettingsPage() {
       );
 
       if (!res.ok) {
-        setError(await getApiErrorMessage(res, "Auszahlungsanfrage fehlgeschlagen."));
+        setError(
+          await getApiErrorMessage(res, "Auszahlungsanfrage fehlgeschlagen.")
+        );
         return;
       }
 
@@ -619,7 +672,10 @@ export default function SettingsPage() {
         setWallet(walletData);
       }
     } catch (e: unknown) {
-      const msg = getUnknownErrorMessage(e, "Auszahlungsanfrage fehlgeschlagen.");
+      const msg = getUnknownErrorMessage(
+        e,
+        "Auszahlungsanfrage fehlgeschlagen."
+      );
       if (msg.includes("NO_TOKEN") || msg.includes("UNAUTHORIZED")) {
         logout();
         return;
@@ -644,13 +700,18 @@ export default function SettingsPage() {
       const res = await apiFetch("/users/me", { method: "DELETE" }, true);
 
       if (!res.ok) {
-        setError(await getApiErrorMessage(res, "Account konnte nicht gelöscht werden."));
+        setError(
+          await getApiErrorMessage(res, "Account konnte nicht gelöscht werden.")
+        );
         return;
       }
 
       logout();
     } catch (e: unknown) {
-      const msg = getUnknownErrorMessage(e, "Account konnte nicht gelöscht werden.");
+      const msg = getUnknownErrorMessage(
+        e,
+        "Account konnte nicht gelöscht werden."
+      );
       if (msg.includes("NO_TOKEN") || msg.includes("UNAUTHORIZED")) {
         logout();
         return;
@@ -675,7 +736,9 @@ export default function SettingsPage() {
     <main className="min-h-screen bg-[#050d1a] px-4 pb-24 pt-6 text-slate-100 md:px-8">
       <div className="mx-auto max-w-3xl space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-black tracking-tight text-white md:text-3xl">Einstellungen</h1>
+          <h1 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+            Einstellungen
+          </h1>
           <Link
             href="/profile"
             className="rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold text-slate-100 transition hover:bg-white/15"
@@ -701,7 +764,11 @@ export default function SettingsPage() {
           <div className="mt-3 flex items-center gap-3">
             <div className="h-14 w-14 overflow-hidden rounded-full border border-white/20 bg-slate-700">
               {avatarSrc ? (
-                <img src={avatarSrc} alt={me?.username || "Avatar"} className="h-full w-full object-cover" />
+                <img
+                  src={avatarSrc}
+                  alt={me?.username || "Avatar"}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-sm font-bold">
                   {initials(me?.username || "")}
@@ -730,7 +797,9 @@ export default function SettingsPage() {
         </section>
 
         <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-4 md:p-5">
-          <h2 className="text-lg font-bold text-white">Benutzername, E-Mail, Geburtsdatum / 18+ Status</h2>
+          <h2 className="text-lg font-bold text-white">
+            Benutzername, E-Mail, Slogan, Geburtsdatum / 18+ Status
+          </h2>
           <div className="mt-3 grid gap-3">
             <label className="text-xs text-slate-300">Benutzername</label>
             <input
@@ -747,6 +816,25 @@ export default function SettingsPage() {
               className="h-10 rounded-xl border border-white/10 bg-white/[0.04] px-3 text-sm text-white outline-none"
             />
 
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <label className="mb-2 block text-sm font-semibold text-white">
+                Profil-Slogan
+              </label>
+
+              <textarea
+                value={slogan}
+                onChange={(e) => setSlogan(e.target.value.slice(0, 120))}
+                placeholder="Zum Beispiel: Keine Ausreden. Nur Ergebnisse."
+                rows={3}
+                className="w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500"
+              />
+
+              <div className="mt-2 flex items-center justify-between text-xs text-slate-400">
+                <span>Ein kurzer Satz, der in deinem Profil angezeigt wird.</span>
+                <span>{slogan.length}/120</span>
+              </div>
+            </div>
+
             <label className="text-xs text-slate-300">Geburtsdatum</label>
             <input
               value={dateOfBirth}
@@ -756,7 +844,10 @@ export default function SettingsPage() {
             />
 
             <div className="text-xs text-slate-400">
-              18+ Status: {me?.isAdultVerified || isAtLeast18(dateOfBirth) ? "Freigeschaltet" : "Nicht freigeschaltet"}
+              18+ Status:{" "}
+              {me?.isAdultVerified || isAtLeast18(dateOfBirth)
+                ? "Freigeschaltet"
+                : "Nicht freigeschaltet"}
             </div>
 
             <button
@@ -837,7 +928,10 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={notifications.emailChallengeUpdates}
                 onChange={(e) =>
-                  setNotifications((prev) => ({ ...prev, emailChallengeUpdates: e.target.checked }))
+                  setNotifications((prev) => ({
+                    ...prev,
+                    emailChallengeUpdates: e.target.checked,
+                  }))
                 }
               />
               E-Mail: Challenge-Updates
@@ -847,7 +941,10 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={notifications.emailPayoutUpdates}
                 onChange={(e) =>
-                  setNotifications((prev) => ({ ...prev, emailPayoutUpdates: e.target.checked }))
+                  setNotifications((prev) => ({
+                    ...prev,
+                    emailPayoutUpdates: e.target.checked,
+                  }))
                 }
               />
               E-Mail: Auszahlungs-Status
@@ -857,7 +954,10 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={notifications.pushLiveEvents}
                 onChange={(e) =>
-                  setNotifications((prev) => ({ ...prev, pushLiveEvents: e.target.checked }))
+                  setNotifications((prev) => ({
+                    ...prev,
+                    pushLiveEvents: e.target.checked,
+                  }))
                 }
               />
               Push: Live-Ereignisse
@@ -870,7 +970,10 @@ export default function SettingsPage() {
                 type="checkbox"
                 checked={notifications.marketingNews}
                 onChange={(e) =>
-                  setNotifications((prev) => ({ ...prev, marketingNews: e.target.checked }))
+                  setNotifications((prev) => ({
+                    ...prev,
+                    marketingNews: e.target.checked,
+                  }))
                 }
               />
               Marketing-News
@@ -882,7 +985,9 @@ export default function SettingsPage() {
               disabled={savingNotifications}
               className="mt-2 h-10 rounded-xl border border-white/20 bg-white/[0.08] text-sm font-bold text-white disabled:opacity-60"
             >
-              {savingNotifications ? "Speichert..." : "Benachrichtigungen speichern"}
+              {savingNotifications
+                ? "Speichert..."
+                : "Benachrichtigungen speichern"}
             </button>
 
             <button
@@ -931,10 +1036,27 @@ export default function SettingsPage() {
           </div>
         </section>
 
+        <section className="rounded-3xl border border-amber-300/30 bg-amber-500/10 p-4 md:p-5">
+          <h2 className="text-lg font-bold text-amber-100">Ausloggen</h2>
+          <p className="mt-2 text-sm text-amber-100/85">
+            Du wirst von diesem Gerät abgemeldet und zur Login-Seite weitergeleitet.
+          </p>
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={logout}
+              className="h-10 rounded-xl border border-amber-300/40 bg-amber-500/20 px-4 text-sm font-bold text-amber-100"
+            >
+              Jetzt ausloggen
+            </button>
+          </div>
+        </section>
+
         <section className="rounded-3xl border border-rose-300/30 bg-rose-500/10 p-4 md:p-5">
           <h2 className="text-lg font-bold text-rose-100">Account löschen</h2>
           <p className="mt-2 text-sm text-rose-100/85">
-            Gib zur Bestätigung DELETE ein. Diese Aktion kann nicht rückgängig gemacht werden.
+            Gib zur Bestätigung DELETE ein. Diese Aktion kann nicht rückgängig
+            gemacht werden.
           </p>
           <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]">
             <input

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import UserAvatar from "@/components/UserAvatar";
+import NotificationsBell from "@/components/NotificationsBell";
 
 type NavItem = { href: string; label: string };
 type AppLocale = "de" | "en" | "es" | "fr";
@@ -88,8 +89,6 @@ export default function Navbar() {
   const [totalXp, setTotalXp] = useState(0);
   const [level, setLevel] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
-  const [isProfileCompact, setIsProfileCompact] = useState(false);
-  const [isChallengesCompact, setIsChallengesCompact] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -107,8 +106,6 @@ export default function Navbar() {
     const updateViewport = () => {
       const width = window.innerWidth;
       setIsMobile(width < 768);
-      setIsProfileCompact(width < 1280 && (pathname ?? "").startsWith("/profile"));
-      setIsChallengesCompact(width < 1280 && (pathname ?? "").startsWith("/challenges"));
     };
 
     updateViewport();
@@ -322,7 +319,7 @@ export default function Navbar() {
   // WICHTIG:
   // Eingeloggt + Mobile = globale Navbar komplett ausblenden.
   // So kann jede App-Seite ihre eigene mobile Top-Bar haben.
-  if (hasToken && (isMobile || isProfileCompact || isChallengesCompact)) {
+  if (hasToken && isMobile) {
     return null;
   }
 
@@ -611,6 +608,11 @@ export default function Navbar() {
                 marginLeft: "auto",
               }}
             >
+              <NotificationsBell
+                buttonClassName="relative inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50"
+                panelClassName="absolute right-0 top-[calc(100%+10px)] z-[120] w-[340px] max-w-[85vw] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.16)]"
+              />
+
               <div ref={localeMenuRef} style={{ position: "relative" }}>
                 <button
                   type="button"
@@ -744,7 +746,7 @@ export default function Navbar() {
               </div>
 
               <Link
-                href="/profile"
+                href={username ? `/users/${encodeURIComponent(username)}` : "/profile"}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -752,8 +754,8 @@ export default function Navbar() {
                   textDecoration: "none",
                   padding: "8px 12px",
                   borderRadius: 16,
-                  border: isActive("/profile") ? "1px solid #d7dbe2" : "1px solid #e5e7eb",
-                  background: isActive("/profile") ? "#f6f7f9" : "white",
+                  border: isActive("/users/") ? "1px solid #d7dbe2" : "1px solid #e5e7eb",
+                  background: isActive("/users/") ? "#f6f7f9" : "white",
                   color: "black",
                   minWidth: 0,
                   maxWidth: 220,

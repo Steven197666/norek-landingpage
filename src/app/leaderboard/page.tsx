@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import NotificationsBell from "@/components/NotificationsBell";
@@ -384,7 +383,6 @@ function ListRow({
 }
 
 export default function LeaderboardPage() {
-  const router = useRouter();
   const locale = useMemo(() => getActiveChallengeLocale(), []);
   const ui = useMemo(() => getUi(locale), [locale]);
 
@@ -475,30 +473,12 @@ export default function LeaderboardPage() {
       <div className="mx-auto w-full max-w-[430px] px-2 pb-28 pt-3 md:max-w-[920px] md:px-6 md:pb-10">
         <div className="mx-auto overflow-hidden rounded-[34px] border border-[#193051] bg-[linear-gradient(180deg,#07142b_0%,#061126_58%,#050f21_100%)] shadow-[0_24px_70px_rgba(0,0,0,0.5)]">
           <div className="border-b border-white/7 px-3 pb-4 pt-4 md:px-6 md:pt-5">
-            <div className="mb-3 flex items-center justify-between text-slate-300">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-base"
-                aria-label={ui.back}
-              >
-                ←
-              </button>
-
-              <div className="text-[1.03rem] font-extrabold tracking-tight text-white md:text-lg">
+            <div className="relative mb-3 flex items-center justify-end text-slate-300">
+              <div className="pointer-events-none absolute inset-x-0 text-center text-[1.03rem] font-extrabold tracking-tight text-white md:text-lg">
                 {ui.title}
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={refresh}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-sm"
-                  aria-label={ui.loading}
-                >
-                  ⟳
-                </button>
-
+              <div className="relative flex items-center gap-2">
                 <NotificationsBell buttonClassName="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06]" />
 
                 <div ref={menuRef} className="relative">
@@ -519,6 +499,17 @@ export default function LeaderboardPage() {
                       role="menu"
                       aria-label="Quick menu"
                     >
+                      <button
+                        type="button"
+                        className="block w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-200 transition hover:bg-white/[0.06]"
+                        role="menuitem"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          refresh();
+                        }}
+                      >
+                        Aktualisieren
+                      </button>
                       <Link
                         href="/einstellungen"
                         className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/[0.06]"

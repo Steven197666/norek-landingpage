@@ -1,5 +1,6 @@
 import Link from "next/link";
 import UserAvatar from "@/components/UserAvatar";
+import { normalizeProfileHandle, toPublicProfilePath } from "@/lib/profile-route";
 
 type Props = {
   username?: string | null;
@@ -16,18 +17,17 @@ export default function UserLink({
   avatarSize = 32,
   showAt = true,
 }: Props) {
-  if (!username) return null;
-
-  const clean = String(username).replace(/^@/, "").trim();
+  const clean = normalizeProfileHandle(username);
   if (!clean) return null;
 
-  const href = `/users/${clean}`;
+  const href = toPublicProfilePath(clean);
+  if (!href) return null;
 
   return (
     <Link
       href={href}
       className={`inline-flex items-center gap-2 font-semibold text-slate-900 hover:underline ${className}`}
-      title={`Profil von @${clean} öffnen`}
+      title={`Profil öffnen (@${clean})`}
     >
       <UserAvatar
         username={clean}

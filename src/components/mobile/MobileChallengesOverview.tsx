@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import NotificationsBell from "@/components/NotificationsBell";
+import { toPublicProfilePath } from "@/lib/profile-route";
 
 type ChallengeLocale = "de" | "en" | "es" | "fr";
 type TranslationMap = Partial<Record<ChallengeLocale, string>>;
@@ -125,6 +127,8 @@ type MobileOverviewUi = {
   loadMore: string;
   loadingMore: string;
   allShown: string;
+  by: string;
+  creatorUnknown: string;
   current: string;
   targetPot: string;
   currentPot: string;
@@ -156,6 +160,8 @@ const MOBILE_UI: Record<ChallengeLocale, MobileOverviewUi> = {
     loadMore: "Mehr laden",
     loadingMore: "Lädt…",
     allShown: "Alle geladenen Challenges angezeigt.",
+    by: "Von",
+    creatorUnknown: "Creator unbekannt",
     current: "€",
     targetPot: "Zielpot",
     currentPot: "Aktueller Pot",
@@ -185,6 +191,8 @@ const MOBILE_UI: Record<ChallengeLocale, MobileOverviewUi> = {
     loadMore: "Load more",
     loadingMore: "Loading…",
     allShown: "All loaded challenges are shown.",
+    by: "By",
+    creatorUnknown: "Creator unknown",
     current: "€",
     targetPot: "Target Pot",
     currentPot: "Current Pot",
@@ -214,6 +222,8 @@ const MOBILE_UI: Record<ChallengeLocale, MobileOverviewUi> = {
     loadMore: "Cargar más",
     loadingMore: "Cargando…",
     allShown: "Se muestran todos los retos cargados.",
+    by: "Por",
+    creatorUnknown: "Creador desconocido",
     current: "€",
     targetPot: "Bote objetivo",
     currentPot: "Bote actual",
@@ -243,6 +253,8 @@ const MOBILE_UI: Record<ChallengeLocale, MobileOverviewUi> = {
     loadMore: "Charger plus",
     loadingMore: "Chargement…",
     allShown: "Tous les défis chargés sont affichés.",
+    by: "Par",
+    creatorUnknown: "Créateur inconnu",
     current: "€",
     targetPot: "Pot cible",
     currentPot: "Pot actuel",
@@ -307,28 +319,19 @@ function extractMuxPlaybackId(value: string | null | undefined): string | null {
   const raw = String(value ?? "").trim();
   if (!raw) return null;
 
-  // Handle .m3u8 stream URLs
   if (raw.startsWith("https://stream.mux.com/")) {
-    return raw
-      .replace("https://stream.mux.com/", "")
-      .replace(".m3u8", "")
-      .trim();
+    return raw.replace("https://stream.mux.com/", "").replace(".m3u8", "").trim();
   }
 
   if (raw.startsWith("http://stream.mux.com/")) {
-    return raw
-      .replace("http://stream.mux.com/", "")
-      .replace(".m3u8", "")
-      .trim();
+    return raw.replace("http://stream.mux.com/", "").replace(".m3u8", "").trim();
   }
 
-  // Handle .m3u8 in paths
   if (raw.includes(".m3u8")) {
     const last = raw.split("/").pop() ?? "";
     return last.replace(".m3u8", "").trim() || null;
   }
 
-  // Reject full URLs
   if (
     raw.startsWith("http://") ||
     raw.startsWith("https://") ||
@@ -337,7 +340,6 @@ function extractMuxPlaybackId(value: string | null | undefined): string | null {
     return null;
   }
 
-  // Return bare ID
   return raw;
 }
 
@@ -352,11 +354,7 @@ function resolveChallengePreviewImage(challenge: Challenge): string | null {
   );
   if (directPreview) return directPreview;
 
-  const rawPlayback =
-    challenge.winnerPlaybackId ??
-    challenge.leaderPlaybackId ??
-    null;
-
+  const rawPlayback = challenge.winnerPlaybackId ?? challenge.leaderPlaybackId ?? null;
   const muxPlaybackId = extractMuxPlaybackId(rawPlayback);
 
   if (muxPlaybackId) {
@@ -410,6 +408,14 @@ function getSupporterCount(challenge: Challenge): number {
   }
 
   return 0;
+}
+
+function getCreatorUsername(challenge: Challenge): string | null {
+  const ref = challenge.owner ?? challenge.Owner ?? challenge.creator ?? null;
+  const username = ref?.username;
+  if (!username || typeof username !== "string") return null;
+  const cleaned = username.trim();
+  return cleaned.length ? cleaned : null;
 }
 
 function getParticipantCount(challenge: Challenge): number {
@@ -475,24 +481,14 @@ function getStatusClasses(challenge: Challenge) {
 
 function tabClass(active: boolean) {
   return active
-    ? "inline-flex h-[30px] items-center rounded-[10px] border border-[#2E67FF]/42 bg-[linear-gradient(180deg,#2C72FF_0%,#1E5BFF_100%)] px-3 text-[10px] font-semibold text-white shadow-[0_8px_16px_rgba(30,91,255,0.22)]"
-    : "inline-flex h-[30px] items-center rounded-[10px] border border-transparent bg-transparent px-3 text-[10px] font-medium text-[#8290A4]";
+    ? "inline-flex h-[30px] items-center rounded-xl border border-[#2E67FF]/42 bg-[linear-gradient(180deg,#2C72FF_0%,#1E5BFF_100%)] px-3 text-[10px] font-semibold text-white shadow-[0_8px_20px_rgba(30,91,255,0.22)]"
+    : "inline-flex h-[30px] items-center rounded-xl border border-white/8 bg-white/[0.025] px-3 text-[10px] font-medium text-[#8290A4]";
 }
 
 function scopeClass(active: boolean) {
   return active
     ? "inline-flex h-[24px] items-center rounded-full border border-white/10 bg-white/[0.06] px-3 text-[9px] font-medium text-[#D8E3F4]"
     : "inline-flex h-[24px] items-center rounded-full border border-white/8 bg-white/[0.025] px-3 text-[9px] font-medium text-[#7F8EA3]";
-}
-
-function HeaderMenuIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[16px] w-[16px]" fill="none" aria-hidden="true">
-      <circle cx="6" cy="12" r="1.4" fill="currentColor" />
-      <circle cx="12" cy="12" r="1.4" fill="currentColor" />
-      <circle cx="18" cy="12" r="1.4" fill="currentColor" />
-    </svg>
-  );
 }
 
 export default function MobileChallengesOverview({
@@ -509,6 +505,7 @@ export default function MobileChallengesOverview({
   onRefresh,
   onLoadMore,
 }: Props) {
+  const router = useRouter();
   const ui = MOBILE_UI[locale];
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -539,282 +536,357 @@ export default function MobileChallengesOverview({
   }, [menuOpen]);
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-[390px] bg-[radial-gradient(circle_at_50%_-14%,rgba(20,72,156,0.11),transparent_42%),linear-gradient(180deg,#050A12_0%,#050B14_100%)] px-4 pb-30 pt-[calc(env(safe-area-inset-top)+8px)] text-white">
-      <div className="mb-3.5 flex items-start justify-between px-0.5">
-        <div>
-          <div className="text-[18px] font-semibold leading-none tracking-[-0.015em] text-[#F5F8FF]">
-            {ui.title}
+    <div className="mx-auto min-h-screen w-full max-w-[430px] bg-[radial-gradient(circle_at_50%_-20%,rgba(50,110,242,0.32),transparent_38%),linear-gradient(180deg,#040b19_0%,#050d1e_58%,#061125_100%)] px-2 pb-28 pt-3 text-white">
+      <div className="overflow-hidden rounded-[34px] border border-[#193051] bg-[linear-gradient(180deg,#07142b_0%,#061126_58%,#050f21_100%)] shadow-[0_24px_70px_rgba(0,0,0,0.5)]">
+        <div className="border-b border-white/7 px-3 pb-4 pt-4">
+          <div className="relative mb-3 flex items-center justify-end text-slate-300">
+            <div className="pointer-events-none absolute inset-x-0 text-center text-[1.03rem] font-extrabold tracking-tight text-white">
+              {ui.title}
+            </div>
+
+            <div className="relative flex items-center gap-2">
+              <NotificationsBell buttonClassName="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-slate-200 transition hover:bg-white/[0.06]" />
+
+              <div ref={menuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen((prev) => !prev)}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-lg text-slate-200"
+                  aria-label="Menu"
+                  aria-haspopup="menu"
+                  aria-expanded={menuOpen}
+                >
+                  ⋯
+                </button>
+
+                {menuOpen ? (
+                  <div
+                    className="absolute right-0 top-[calc(100%+8px)] z-30 min-w-[160px] overflow-hidden rounded-2xl border border-white/10 bg-[#0a1830] p-1.5 shadow-[0_16px_34px_rgba(0,0,0,0.45)]"
+                    role="menu"
+                    aria-label="Quick menu"
+                  >
+                    <button
+                      type="button"
+                      className="block w-full rounded-xl px-3 py-2 text-left text-sm font-medium text-slate-200 transition hover:bg-white/[0.06]"
+                      role="menuitem"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onRefresh();
+                      }}
+                    >
+                      Aktualisieren
+                    </button>
+
+                    <Link
+                      href="/einstellungen"
+                      className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/[0.06]"
+                      role="menuitem"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Einstellungen
+                    </Link>
+                  </div>
+                ) : null}
+              </div>
+            </div>
           </div>
-          <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/7 bg-white/[0.025] px-2 py-[2px] text-[8.5px] font-medium tracking-[0.01em] text-[#708096]">
+
+          <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/7 bg-white/[0.025] px-2 py-[2px] text-[8.5px] font-medium tracking-[0.01em] text-[#708096]">
             <span>{ui.global}</span>
             <span className="rounded-full bg-white/[0.08] px-1.5 py-[1px] text-[7.5px] text-[#9DAAC0]">
               {items.length}
             </span>
           </div>
-        </div>
 
-        <div className="flex items-center gap-1.5 pt-0.5">
-          <NotificationsBell buttonClassName="inline-flex h-7.5 w-7.5 items-center justify-center rounded-full border border-white/6 bg-white/[0.03] text-[#A6B1C2]" />
-
-          <div ref={menuRef} className="relative">
+          <div className="mb-2 flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <button
               type="button"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className="inline-flex h-7.5 w-7.5 items-center justify-center rounded-full border border-white/6 bg-white/[0.03] text-[#A6B1C2]"
-              aria-label="Menu"
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
+              onClick={() => setScopeFilter("all")}
+              className={scopeClass(scopeFilter === "all")}
             >
-              <HeaderMenuIcon />
+              {ui.allScope}
             </button>
-
-            {menuOpen ? (
-              <div
-                className="absolute right-0 top-[calc(100%+8px)] z-30 min-w-[150px] overflow-hidden rounded-2xl border border-white/10 bg-[#0B1422] p-1.5 shadow-[0_16px_34px_rgba(0,0,0,0.45)]"
-                role="menu"
-                aria-label="Quick menu"
-              >
-                <Link
-                  href="/einstellungen"
-                  className="block rounded-xl px-3 py-2 text-[12px] font-medium text-[#D4DEED] transition hover:bg-white/[0.06]"
-                  role="menuitem"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Einstellungen
-                </Link>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-2 flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <button type="button" onClick={() => setScopeFilter("all")} className={scopeClass(scopeFilter === "all")}>
-          {ui.allScope}
-        </button>
-        <button type="button" onClick={() => setScopeFilter("new")} className={scopeClass(scopeFilter === "new")}>
-          {ui.newScope}
-        </button>
-        <button type="button" onClick={() => setScopeFilter("popular")} className={scopeClass(scopeFilter === "popular")}>
-          {ui.popularScope}
-        </button>
-      </div>
-
-      <div className="mb-3.5 flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <button type="button" onClick={() => setFilter("active")} className={tabClass(filter === "active")}>
-          {ui.active}
-        </button>
-        <button type="button" onClick={() => setFilter("funding")} className={tabClass(filter === "funding")}>
-          {ui.funding}
-        </button>
-        <button type="button" onClick={() => setFilter("voting")} className={tabClass(filter === "voting")}>
-          {ui.voting}
-        </button>
-        <button type="button" onClick={() => setFilter("completed")} className={tabClass(filter === "completed")}>
-          {ui.completed}
-        </button>
-        <button type="button" onClick={() => setFilter("live")} className={tabClass(filter === "live")}>
-          {ui.live}
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex min-h-[120px] gap-3 rounded-[18px] border border-white/5 bg-[#0A111B] p-3 animate-pulse"
+            <button
+              type="button"
+              onClick={() => setScopeFilter("new")}
+              className={scopeClass(scopeFilter === "new")}
             >
-              <div className="h-[92px] w-[92px] rounded-[12px] bg-white/10" />
-              <div className="flex-1">
-                <div className="h-3.5 w-2/3 rounded bg-white/10" />
-                <div className="mt-2.5 h-2.5 w-1/2 rounded bg-white/10" />
-                <div className="mt-5 h-2.5 w-full rounded bg-white/10" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : error ? (
-        <div className="rounded-[16px] border border-red-400/20 bg-red-500/10 p-4">
-          <div className="text-sm font-semibold text-red-200">{error}</div>
-          <button
-            type="button"
-            onClick={() => onRefresh()}
-            className="mt-3 inline-flex h-9 items-center justify-center rounded-full bg-white px-4 text-xs font-bold text-slate-900"
-          >
-            {ui.retry}
-          </button>
-        </div>
-      ) : items.length === 0 ? (
-        <div className="rounded-[18px] border border-white/7 bg-[#0A111B] p-5 text-center">
-          <div className="text-base font-bold text-white">{ui.noResults}</div>
-          <div className="mt-1.5 text-xs leading-5 text-slate-400">{ui.noResultsText}</div>
-        </div>
-      ) : (
-        <>
-          <div className="space-y-3">
-            {items.map((challenge, index) => {
-              const title = getLocalizedChallengeText(
-                challenge.title,
-                challenge.titleTranslations,
-                locale
-              );
-
-              const description = getLocalizedChallengeText(
-                challenge.description,
-                challenge.descriptionTranslations,
-                locale
-              );
-
-              const thumbnailSrc = resolveChallengePreviewImage(challenge);
-              const uploadedVideoFallbackUrl = resolveUploadedVideoFallbackUrl(challenge);
-
-              const participantCount = getParticipantCount(challenge);
-              const supporterCount = getSupporterCount(challenge);
-              const current = Number(challenge.currentAmount ?? 0);
-              const target = Number(challenge.minAmount ?? 0);
-              const hasOnlineVideo = challengeHasOnlineVideo(challenge);
-
-              return (
-                <Link
-                  key={challenge.id}
-                  href={`/challenges/${challenge.id}`}
-                  className="block"
-                >
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.24, delay: Math.min(index * 0.03, 0.12) }}
-                    className="relative flex min-h-[120px] gap-3 rounded-[18px] border border-white/4 bg-[#08111C] p-3 shadow-[0_10px_22px_rgba(0,0,0,0.28)]"
-                  >
-                    <div className="relative h-[92px] w-[92px] flex-shrink-0 overflow-hidden rounded-[12px] bg-[#101A26]">
-                      {thumbnailSrc ? (
-                        <>
-                          <img
-                            src={thumbnailSrc}
-                            alt={title}
-                            className="h-full w-full object-cover"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/38 via-transparent to-transparent" />
-                        </>
-                      ) : uploadedVideoFallbackUrl ? (
-                        <>
-                          <video
-                            src={uploadedVideoFallbackUrl}
-                            className="h-full w-full object-cover"
-                            muted
-                            playsInline
-                            preload="metadata"
-                            onLoadedData={(e) => {
-                              const video = e.currentTarget;
-                              if (video.currentTime > 0) return;
-                              try {
-                                video.currentTime = 0.1;
-                              } catch {}
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/38 via-transparent to-transparent" />
-                        </>
-                      ) : (
-                        <div className="relative h-full w-full bg-[radial-gradient(circle_at_18%_14%,rgba(86,164,255,0.24),transparent_40%),linear-gradient(180deg,#162739_0%,#0B1624_100%)]">
-                          <div className="absolute left-2 top-2 h-1.5 w-7 rounded-full bg-white/12" />
-                          <div className="absolute left-2 top-5 h-1.5 w-4 rounded-full bg-white/9" />
-                          <div className="absolute bottom-2 left-2 right-2 h-1.5 rounded-full bg-white/11" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="inline-flex h-5.5 w-5.5 items-center justify-center rounded-full border border-white/12 bg-black/25 text-white/75">
-                              <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" aria-hidden="true">
-                                <path d="M3 2.2L7.2 5 3 7.8V2.2z" fill="currentColor" />
-                              </svg>
-                            </span>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="absolute bottom-1.5 left-1.5 rounded bg-black/62 px-1.5 py-[2px] text-[6.5px] font-semibold tracking-[0.03em] text-white/95">
-                        00:00
-                      </div>
-                    </div>
-
-                    <div className="min-w-0 flex-1 pr-0.5 pt-1">
-                      <div className="mb-[2px] flex items-start justify-between gap-2">
-                        <h3 className="line-clamp-1 text-[13px] font-semibold leading-[1.16] tracking-[-0.01em] text-[#F4F7FF]">
-                          {title}
-                        </h3>
-
-                        <div className="flex shrink-0 items-center gap-1.5">
-                          {hasOnlineVideo ? (
-                            <span className="inline-flex rounded-full border border-emerald-400/35 bg-emerald-500/15 px-2 py-[2px] text-[6.5px] font-semibold uppercase tracking-[0.06em] text-emerald-200">
-                              {locale === "en"
-                                ? "Video online"
-                                : locale === "es"
-                                  ? "Video online"
-                                  : locale === "fr"
-                                    ? "Video en ligne"
-                                    : "Video online"}
-                            </span>
-                          ) : null}
-
-                          <span
-                            className={`inline-flex rounded-full border px-2 py-[2px] text-[6.5px] font-semibold uppercase tracking-[0.06em] ${getStatusClasses(
-                              challenge
-                            )}`}
-                          >
-                            {getStatusLabel(challenge, locale, ui)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <p className="line-clamp-1 text-[9.5px] text-[#8C97A7]">
-                        {description || ui.noDescription}
-                      </p>
-
-                      <div className="h-2.5" />
-
-                      <div className="flex items-center justify-between text-[8.5px]">
-                        <div className="flex items-center gap-1 text-[#8FA0B8]">
-                          <span className="font-bold text-[#F4F8FF]">{formatMoneyEUR(target, locale)}</span>
-                          <span>{ui.targetPot}</span>
-                        </div>
-                        <div className="text-right text-[#9AA9BC]">
-                          {participantCount} {ui.participants}
-                        </div>
-                      </div>
-
-                      <div className="mt-1.5 flex items-center justify-between text-[8.5px]">
-                        <div className="flex items-center gap-1 text-[#8FA0B8]">
-                          <span className="font-bold text-[#F4F8FF]">{formatMoneyEUR(current, locale)}</span>
-                          <span>{ui.currentPot}</span>
-                        </div>
-                        <div className="text-right text-[#9AA9BC]">
-                          {supporterCount} {ui.supporters}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </Link>
-              );
-            })}
+              {ui.newScope}
+            </button>
+            <button
+              type="button"
+              onClick={() => setScopeFilter("popular")}
+              className={scopeClass(scopeFilter === "popular")}
+            >
+              {ui.popularScope}
+            </button>
           </div>
 
-          <div className="mt-5 flex flex-col items-center gap-2">
-            {hasMore ? (
+          <div className="flex gap-1 overflow-x-auto rounded-2xl border border-[#1c3459] bg-[#07152f] p-1 text-[11px] font-semibold [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <button type="button" onClick={() => setFilter("all")} className={tabClass(filter === "all")}>
+              {ui.all}
+            </button>
+            <button type="button" onClick={() => setFilter("active")} className={tabClass(filter === "active")}>
+              {ui.active}
+            </button>
+            <button type="button" onClick={() => setFilter("funding")} className={tabClass(filter === "funding")}>
+              {ui.funding}
+            </button>
+            <button type="button" onClick={() => setFilter("voting")} className={tabClass(filter === "voting")}>
+              {ui.voting}
+            </button>
+            <button type="button" onClick={() => setFilter("completed")} className={tabClass(filter === "completed")}>
+              {ui.completed}
+            </button>
+            <button type="button" onClick={() => setFilter("live")} className={tabClass(filter === "live")}>
+              {ui.live}
+            </button>
+          </div>
+        </div>
+
+        <div className="px-3 py-4">
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex min-h-[116px] gap-3 rounded-[22px] border border-white/10 bg-[linear-gradient(180deg,rgba(8,18,37,0.95)_0%,rgba(5,12,26,0.98)_100%)] p-2.5 animate-pulse"
+                >
+                  <div className="h-[88px] w-[88px] rounded-[16px] bg-white/10" />
+                  <div className="flex-1">
+                    <div className="h-3.5 w-2/3 rounded bg-white/10" />
+                    <div className="mt-2 h-2.5 w-1/2 rounded bg-white/10" />
+                    <div className="mt-4 h-2.5 w-full rounded bg-white/10" />
+                    <div className="mt-2 h-2.5 w-5/6 rounded bg-white/10" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className="rounded-[24px] border border-rose-400/25 bg-rose-400/10 p-5 text-rose-200">
+              <div className="text-sm font-semibold">{error}</div>
               <button
                 type="button"
-                onClick={() => onLoadMore()}
-                disabled={loadingMore}
-                className="inline-flex h-10 items-center justify-center rounded-full bg-white px-5 text-xs font-bold text-slate-900 transition hover:bg-slate-100 disabled:opacity-50"
+                onClick={() => onRefresh()}
+                className="mt-4 inline-flex h-9 items-center justify-center rounded-full bg-white px-4 text-xs font-bold text-slate-900"
               >
-                {loadingMore ? ui.loadingMore : ui.loadMore}
+                {ui.retry}
               </button>
-            ) : (
-              <div className="rounded-full border border-white/8 bg-white/[0.04] px-4 py-2 text-[11px] font-medium text-slate-400">
-                {ui.allShown}
+            </div>
+          ) : items.length === 0 ? (
+            <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-5 text-center">
+              <div className="text-base font-bold text-white">{ui.noResults}</div>
+              <div className="mt-1.5 text-xs leading-5 text-slate-400">
+                {ui.noResultsText}
               </div>
-            )}
-          </div>
-        </>
-      )}
+            </div>
+          ) : (
+            <>
+              <div className="space-y-3">
+                {items.map((challenge, index) => {
+                  const title = getLocalizedChallengeText(
+                    challenge.title,
+                    challenge.titleTranslations,
+                    locale
+                  );
+
+                  const description = getLocalizedChallengeText(
+                    challenge.description,
+                    challenge.descriptionTranslations,
+                    locale
+                  );
+
+                  const thumbnailSrc = resolveChallengePreviewImage(challenge);
+                  const uploadedVideoFallbackUrl = resolveUploadedVideoFallbackUrl(challenge);
+
+                  const participantCount = getParticipantCount(challenge);
+                  const supporterCount = getSupporterCount(challenge);
+                  const current = Number(challenge.currentAmount ?? 0);
+                  const target = Number(challenge.minAmount ?? 0);
+                  const hasOnlineVideo = challengeHasOnlineVideo(challenge);
+                  const creatorUsername = getCreatorUsername(challenge);
+                  const creatorHandle = creatorUsername
+                    ? creatorUsername.replace(/^@/, "").trim()
+                    : "";
+
+                  return (
+                    <Link
+                      key={challenge.id}
+                      href={`/challenges/${challenge.id}`}
+                      className="block"
+                      onClick={(e) => {
+                        const target = e.target as HTMLElement | null;
+                        if (target?.closest("[data-profile-link='true']")) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.24,
+                          delay: Math.min(index * 0.03, 0.12),
+                        }}
+                        className="relative flex min-h-[118px] gap-3 rounded-[22px] border border-[#1d3458] bg-[linear-gradient(180deg,rgba(8,18,37,0.95)_0%,rgba(5,12,26,0.98)_100%)] p-2.5 shadow-[0_14px_32px_rgba(0,0,0,0.28)]"
+                      >
+                        <div className="relative h-[88px] w-[88px] flex-shrink-0 overflow-hidden rounded-[16px] bg-[#101A26]">
+                          {thumbnailSrc ? (
+                            <>
+                              <img
+                                src={thumbnailSrc}
+                                alt={title}
+                                className="h-full w-full object-cover"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/42 via-transparent to-transparent" />
+                            </>
+                          ) : uploadedVideoFallbackUrl ? (
+                            <>
+                              <video
+                                src={uploadedVideoFallbackUrl}
+                                className="h-full w-full object-cover"
+                                muted
+                                playsInline
+                                preload="metadata"
+                                onLoadedData={(e) => {
+                                  const video = e.currentTarget;
+                                  if (video.currentTime > 0) return;
+                                  try {
+                                    video.currentTime = 0.1;
+                                  } catch {}
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/42 via-transparent to-transparent" />
+                            </>
+                          ) : (
+                            <div className="relative h-full w-full bg-[radial-gradient(circle_at_18%_14%,rgba(86,164,255,0.24),transparent_40%),linear-gradient(180deg,#162739_0%,#0B1624_100%)]">
+                              <div className="absolute left-2 top-2 h-1.5 w-7 rounded-full bg-white/12" />
+                              <div className="absolute left-2 top-5 h-1.5 w-4 rounded-full bg-white/9" />
+                              <div className="absolute bottom-2 left-2 right-2 h-1.5 rounded-full bg-white/11" />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="inline-flex h-5.5 w-5.5 items-center justify-center rounded-full border border-white/12 bg-black/25 text-white/75">
+                                  <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" aria-hidden="true">
+                                    <path d="M3 2.2L7.2 5 3 7.8V2.2z" fill="currentColor" />
+                                  </svg>
+                                </span>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="absolute bottom-1.5 left-1.5 rounded bg-black/62 px-1.5 py-[2px] text-[6.5px] font-semibold tracking-[0.03em] text-white/95">
+                            00:00
+                          </div>
+                        </div>
+
+                        <div className="min-w-0 flex-1 pt-0.5">
+                          <div className="mb-1 flex items-start justify-between gap-2">
+                            <h3 className="line-clamp-1 text-[13px] font-semibold leading-[1.16] tracking-[-0.01em] text-[#F4F7FF]">
+                              {title}
+                            </h3>
+
+                            <div className="flex shrink-0 items-center gap-1.5">
+                              {hasOnlineVideo ? (
+                                <span className="inline-flex rounded-full border border-emerald-400/35 bg-emerald-500/15 px-2 py-[2px] text-[6.5px] font-semibold uppercase tracking-[0.06em] text-emerald-200">
+                                  {locale === "en"
+                                    ? "Video online"
+                                    : locale === "es"
+                                    ? "Video online"
+                                    : locale === "fr"
+                                    ? "Video en ligne"
+                                    : "Video online"}
+                                </span>
+                              ) : null}
+
+                              <span
+                                className={`inline-flex rounded-full border px-2 py-[2px] text-[6.5px] font-semibold uppercase tracking-[0.06em] ${getStatusClasses(
+                                  challenge
+                                )}`}
+                              >
+                                {getStatusLabel(challenge, locale, ui)}
+                              </span>
+                            </div>
+                          </div>
+
+                          <p className="line-clamp-1 text-[9.5px] text-[#8C97A7]">
+                            {description || ui.noDescription}
+                          </p>
+
+                          <p className="mt-1 line-clamp-1 text-[9px] text-[#7F8EA3]">
+                            {ui.by}:{" "}
+                            {creatorHandle ? (
+                              <button
+                                type="button"
+                                data-profile-link="true"
+                                className="font-semibold text-[#C9D6E8] underline decoration-[#5A6B84] underline-offset-2"
+                                onPointerDown={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  const target = toPublicProfilePath(creatorHandle);
+                                  if (target) router.push(target);
+                                }}
+                              >
+                                @{creatorHandle}
+                              </button>
+                            ) : (
+                              ui.creatorUnknown
+                            )}
+                          </p>
+
+                          <div className="mt-3 flex items-center justify-between text-[8.5px]">
+                            <div className="flex items-center gap-1 text-[#8FA0B8]">
+                              <span className="font-bold text-[#F4F8FF]">
+                                {formatMoneyEUR(target, locale)}
+                              </span>
+                              <span>{ui.targetPot}</span>
+                            </div>
+                            <div className="text-right text-[#9AA9BC]">
+                              {participantCount} {ui.participants}
+                            </div>
+                          </div>
+
+                          <div className="mt-1.5 flex items-center justify-between text-[8.5px]">
+                            <div className="flex items-center gap-1 text-[#8FA0B8]">
+                              <span className="font-bold text-[#F4F8FF]">
+                                {formatMoneyEUR(current, locale)}
+                              </span>
+                              <span>{ui.currentPot}</span>
+                            </div>
+                            <div className="text-right text-[#9AA9BC]">
+                              {supporterCount} {ui.supporters}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 flex flex-col items-center gap-3">
+                {hasMore ? (
+                  <button
+                    type="button"
+                    onClick={() => onLoadMore()}
+                    disabled={loadingMore}
+                    className="inline-flex h-10 items-center justify-center rounded-full bg-white px-5 text-xs font-bold text-slate-900 transition hover:bg-slate-100 disabled:opacity-50"
+                  >
+                    {loadingMore ? ui.loadingMore : ui.loadMore}
+                  </button>
+                ) : (
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[11px] font-medium text-slate-400">
+                    {ui.allShown}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
       <style jsx global>{`
         html,

@@ -20,10 +20,10 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    eyebrow: "Willkommen bei DarePay",
+    eyebrow: "Willkommen bei Norek",
     title: "Hier treten Nutzer in echten Challenges gegeneinander an",
     text:
-      "DarePay ist keine normale Video-Plattform. Hier gibt es Challenges, Konkurrenz, Voting und einen Pot. Nutzer treten an, die Community bewertet, der stärkste Versuch gewinnt.",
+      "Norek ist keine normale Video-Plattform. Hier gibt es Challenges, Konkurrenz, Voting und einen Pot. Nutzer treten an, die Community bewertet, der stärkste Versuch gewinnt.",
   },
   {
     eyebrow: "Teilnahme",

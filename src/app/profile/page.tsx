@@ -225,7 +225,7 @@ const PROFILE_UI: Record<ChallengeLocale, ProfileUi> = {
     funding: "Funding",
     activeVoting: "Aktiv / Voting",
     memberSince: "Dabei seit",
-    yourStart: "Dein Start auf DarePay",
+    yourStart: "Dein Start auf Norek",
 
     latestChallengesTitle: "Neueste Challenges",
     latestChallengesSubtitle: "Deine zuletzt erstellten Challenges.",
@@ -357,7 +357,7 @@ const PROFILE_UI: Record<ChallengeLocale, ProfileUi> = {
     funding: "Funding",
     activeVoting: "Active / Voting",
     memberSince: "Member since",
-    yourStart: "Your start on DarePay",
+    yourStart: "Your start on Norek",
 
     latestChallengesTitle: "Latest challenges",
     latestChallengesSubtitle: "Your most recently created challenges.",
@@ -489,7 +489,7 @@ const PROFILE_UI: Record<ChallengeLocale, ProfileUi> = {
     funding: "Funding",
     activeVoting: "Activo / Voting",
     memberSince: "Desde",
-    yourStart: "Tu inicio en DarePay",
+    yourStart: "Tu inicio en Norek",
 
     latestChallengesTitle: "Últimos challenges",
     latestChallengesSubtitle: "Tus challenges creados más recientemente.",
@@ -622,7 +622,7 @@ const PROFILE_UI: Record<ChallengeLocale, ProfileUi> = {
     funding: "Funding",
     activeVoting: "Actif / Voting",
     memberSince: "Membre depuis",
-    yourStart: "Ton début sur DarePay",
+    yourStart: "Ton début sur Norek",
 
     latestChallengesTitle: "Derniers challenges",
     latestChallengesSubtitle: "Tes challenges créés les plus récents.",
@@ -1079,7 +1079,7 @@ function FooterNavIcon({
   );
 }
 
-function DarepayLogo({ className = "h-12 w-auto" }: { className?: string }) {
+function NorekLogo({ className = "h-12 w-auto" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 1200 1200"
@@ -2394,7 +2394,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="mb-5 flex items-center justify-between">
-              <DarepayLogo className="h-14 w-auto" />
+              <NorekLogo className="h-14 w-auto" />
 
               <div className="flex items-center gap-2.5">
                 <select

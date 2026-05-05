@@ -388,7 +388,7 @@ type OverviewUi = {
 
 const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
   de: {
-    discover: "DarePay Discover",
+    discover: "Norek Discover",
     heroTitle: "Challenges mit echtem Einsatz.",
     heroText:
       "Hier treten Nutzer gegeneinander an, die Community votet und der stärkste Beitrag gewinnt. Unterstützungen erhöhen den Pot und machen Challenges spürbar größer.",
@@ -398,7 +398,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     newChallenge: "+ Neue Challenge",
     refresh: "Aktualisieren",
 
-    platformNumbersEyebrow: "DarePay in Zahlen",
+    platformNumbersEyebrow: "Norek in Zahlen",
     platformNumbersTitle: "Was Nutzer mit der App bisher erreicht haben",
     platformNumbersText:
       "Öffentliche Gesamtzahlen der Plattform statt einzelner privater Gewinne.",
@@ -406,7 +406,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     totalPaidOut: "Gesamt ausgezahlt",
     totalPaidOutHint: "An Gewinner ausgezahlt",
     totalChallenges: "Challenges erstellt",
-    totalChallengesHint: "Veröffentlicht auf DarePay",
+    totalChallengesHint: "Veröffentlicht auf Norek",
     totalUsers: "Community-Mitglieder",
     totalUsersHint: "Registrierte Nutzer",
     totalSupports: "Unterstützungen",
@@ -538,7 +538,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
   },
 
   en: {
-    discover: "DarePay Discover",
+    discover: "Norek Discover",
     heroTitle: "Challenges with real stakes.",
     heroText:
       "Users compete here, the community votes, and the strongest attempt wins. Support increases the pot and makes challenges feel bigger.",
@@ -548,7 +548,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     newChallenge: "+ New challenge",
     refresh: "Refresh",
 
-    platformNumbersEyebrow: "DarePay in numbers",
+    platformNumbersEyebrow: "Norek in numbers",
     platformNumbersTitle: "What users have achieved in the app so far",
     platformNumbersText:
       "Public platform totals instead of individual private winnings.",
@@ -556,7 +556,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     totalPaidOut: "Total paid out",
     totalPaidOutHint: "Paid out to winners",
     totalChallenges: "Challenges created",
-    totalChallengesHint: "Published on DarePay",
+    totalChallengesHint: "Published on Norek",
     totalUsers: "Community members",
     totalUsersHint: "Registered users",
     totalSupports: "Supports",
@@ -690,7 +690,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
   },
 
   es: {
-    discover: "DarePay Discover",
+    discover: "Norek Discover",
     heroTitle: "Retos con apuestas reales.",
     heroText:
       "Aquí los usuarios compiten, la comunidad vota y el intento más fuerte gana. El apoyo aumenta el bote y hace que los retos se sientan más grandes.",
@@ -700,7 +700,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     newChallenge: "+ Nuevo reto",
     refresh: "Actualizar",
 
-    platformNumbersEyebrow: "DarePay en cifras",
+    platformNumbersEyebrow: "Norek en cifras",
     platformNumbersTitle: "Lo que los usuarios han conseguido hasta ahora",
     platformNumbersText:
       "Totales públicos de la plataforma en lugar de ganancias privadas individuales.",
@@ -708,7 +708,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     totalPaidOut: "Total pagado",
     totalPaidOutHint: "Pagado a los ganadores",
     totalChallenges: "Retos creados",
-    totalChallengesHint: "Publicados en DarePay",
+    totalChallengesHint: "Publicados en Norek",
     totalUsers: "Miembros de la comunidad",
     totalUsersHint: "Usuarios registrados",
     totalSupports: "Apoyos",
@@ -842,7 +842,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
   },
 
   fr: {
-    discover: "DarePay Discover",
+    discover: "Norek Discover",
     heroTitle: "Des défis avec un vrai enjeu.",
     heroText:
       "Ici, les utilisateurs s'affrontent, la communauté vote et la tentative la plus forte gagne. Le soutien augmente la cagnotte et rend les défis plus intenses.",
@@ -852,7 +852,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     newChallenge: "+ Nouveau défi",
     refresh: "Actualiser",
 
-    platformNumbersEyebrow: "DarePay en chiffres",
+    platformNumbersEyebrow: "Norek en chiffres",
     platformNumbersTitle: "Ce que les utilisateurs ont déjà accompli",
     platformNumbersText:
       "Des chiffres publics de la plateforme au lieu de gains privés individuels.",
@@ -860,7 +860,7 @@ const OVERVIEW_UI_TEXT: Record<ChallengeLocale, OverviewUi> = {
     totalPaidOut: "Total versé",
     totalPaidOutHint: "Versé aux gagnants",
     totalChallenges: "Défis créés",
-    totalChallengesHint: "Publiés sur DarePay",
+    totalChallengesHint: "Publiés sur Norek",
     totalUsers: "Membres de la communauté",
     totalUsersHint: "Utilisateurs inscrits",
     totalSupports: "Soutiens",
@@ -1000,10 +1000,10 @@ const ONBOARDING_SLIDES: Record<
 > = {
   de: [
     {
-      eyebrow: "Willkommen bei DarePay",
+      eyebrow: "Willkommen bei Norek",
       title: "Hier treten Nutzer in echten Challenges gegeneinander an",
       text:
-        "DarePay ist keine normale Video-Plattform. Hier gibt es Challenges, Konkurrenz, Voting und einen Pot. Nutzer treten an, die Community bewertet, der stärkste Versuch gewinnt.",
+        "Norek ist keine normale Video-Plattform. Hier gibt es Challenges, Konkurrenz, Voting und einen Pot. Nutzer treten an, die Community bewertet, der stärkste Versuch gewinnt.",
     },
     {
       eyebrow: "Teilnahme",
@@ -1020,10 +1020,10 @@ const ONBOARDING_SLIDES: Record<
   ],
   en: [
     {
-      eyebrow: "Welcome to DarePay",
+      eyebrow: "Welcome to Norek",
       title: "Users compete here in real challenges",
       text:
-        "DarePay is not a normal video platform. Here you get challenges, rivalry, voting and a pot. Users compete, the community rates, and the strongest attempt wins.",
+        "Norek is not a normal video platform. Here you get challenges, rivalry, voting and a pot. Users compete, the community rates, and the strongest attempt wins.",
     },
     {
       eyebrow: "Participation",
@@ -1040,10 +1040,10 @@ const ONBOARDING_SLIDES: Record<
   ],
   es: [
     {
-      eyebrow: "Bienvenido a DarePay",
+      eyebrow: "Bienvenido a Norek",
       title: "Aquí los usuarios compiten en retos reales",
       text:
-        "DarePay no es una plataforma de vídeo normal. Aquí hay retos, competencia, votación y un bote. Los usuarios compiten, la comunidad valora y el intento más fuerte gana.",
+        "Norek no es una plataforma de vídeo normal. Aquí hay retos, competencia, votación y un bote. Los usuarios compiten, la comunidad valora y el intento más fuerte gana.",
     },
     {
       eyebrow: "Participación",
@@ -1060,10 +1060,10 @@ const ONBOARDING_SLIDES: Record<
   ],
   fr: [
     {
-      eyebrow: "Bienvenue sur DarePay",
+      eyebrow: "Bienvenue sur Norek",
       title: "Ici, les utilisateurs s’affrontent dans de vrais défis",
       text:
-        "DarePay n’est pas une plateforme vidéo classique. Ici, il y a des défis, de la concurrence, du vote et une cagnotte. Les utilisateurs s’affrontent, la communauté évalue et la tentative la plus forte gagne.",
+        "Norek n’est pas une plateforme vidéo classique. Ici, il y a des défis, de la concurrence, du vote et une cagnotte. Les utilisateurs s’affrontent, la communauté évalue et la tentative la plus forte gagne.",
     },
     {
       eyebrow: "Participation",

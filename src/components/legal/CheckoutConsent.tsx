@@ -31,7 +31,7 @@ export default function CheckoutConsent({
         pricing: "Price / Fee Overview",
         payout: "Payout Policy",
         textAfter:
-          ". I expressly request that DarePay begins performance before the withdrawal period expires. I understand that my right of withdrawal expires early once the service has been fully provided.",
+          ". I expressly request that Norek begins performance before the withdrawal period expires. I understand that my right of withdrawal expires early once the service has been fully provided.",
       };
     }
 
@@ -44,7 +44,7 @@ export default function CheckoutConsent({
         pricing: "Resumen de precios / comisiones",
         payout: "Política de pagos",
         textAfter:
-          ". Solicito expresamente que DarePay comience la prestación antes de que expire el plazo de desistimiento. Sé que mi derecho de desistimiento expira anticipadamente una vez que el servicio se haya prestado por completo.",
+          ". Solicito expresamente que Norek comience la prestación antes de que expire el plazo de desistimiento. Sé que mi derecho de desistimiento expira anticipadamente una vez que el servicio se haya prestado por completo.",
       };
     }
 
@@ -57,7 +57,7 @@ export default function CheckoutConsent({
         pricing: "Aperçu des prix / frais",
         payout: "Politique de versement",
         textAfter:
-          ". Je demande expressément que DarePay commence l’exécution avant l’expiration du délai de rétractation. Je sais que mon droit de rétractation s’éteint de manière anticipée une fois la prestation entièrement fournie.",
+          ". Je demande expressément que Norek commence l’exécution avant l’expiration du délai de rétractation. Je sais que mon droit de rétractation s’éteint de manière anticipée une fois la prestation entièrement fournie.",
       };
     }
 
@@ -69,7 +69,7 @@ export default function CheckoutConsent({
       pricing: "Preis-/Gebührenübersicht",
       payout: "Auszahlungsrichtlinie",
       textAfter:
-        ". Ich verlange ausdrücklich, dass DarePay vor Ablauf der Widerrufsfrist mit der Ausführung beginnt. Mir ist bekannt, dass mein Widerrufsrecht bei vollständiger Leistungserbringung vorzeitig erlöschen kann.",
+        ". Ich verlange ausdrücklich, dass Norek vor Ablauf der Widerrufsfrist mit der Ausführung beginnt. Mir ist bekannt, dass mein Widerrufsrecht bei vollständiger Leistungserbringung vorzeitig erlöschen kann.",
     };
   }, [locale]);
 

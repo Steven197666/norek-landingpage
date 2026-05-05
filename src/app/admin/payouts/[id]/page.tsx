@@ -388,7 +388,7 @@ export default function AdminPayoutDetailPage() {
         <div className="print-page">
           <section className="print-card">
             <h1 className="print-title">Auszahlungsdetails</h1>
-            <p className="print-subtitle">DarePay · Detailansicht einer Auszahlung</p>
+            <p className="print-subtitle">Norek · Detailansicht einer Auszahlung</p>
 
             <div className="print-badges">
               <span className="print-badge">

@@ -894,7 +894,7 @@ export default function AdminCaseEvidencePage() {
         <div className="print-page">
           <section className="print-card">
             <h1 className="print-title">Challenge-Akte</h1>
-            <p className="print-subtitle">DarePay · Kompakte Druckansicht</p>
+            <p className="print-subtitle">Norek · Kompakte Druckansicht</p>
 
             <div className="print-badges">
               <span className="print-badge">Challenge: {challengeStatus}</span>

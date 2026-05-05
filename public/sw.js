@@ -8,12 +8,12 @@ self.addEventListener("push", (event) => {
     payload = event.data.json();
   } catch {
     payload = {
-      title: "DarePay",
+      title: "Norek",
       body: event.data.text(),
     };
   }
 
-  const title = payload.title || "DarePay";
+  const title = payload.title || "Norek";
   const options = {
     body: payload.body || "Neue Benachrichtigung",
     icon: payload.icon || "/icon-192.svg",

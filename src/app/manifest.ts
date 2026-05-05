@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "DarePay",
-    short_name: "DarePay",
+    name: "Norek",
+    short_name: "Norek",
     description: "Challenges, Wallet und Community in einer App.",
     start_url: "/",
     display: "standalone",

@@ -360,7 +360,7 @@ export default function Navbar() {
               flexShrink: 0,
             }}
           >
-            DarePay
+            Norek
           </Link>
 
           <div
@@ -554,7 +554,7 @@ export default function Navbar() {
             flexShrink: 0,
           }}
         >
-          DarePay
+          Norek
         </Link>
 
         {hasToken ? (

@@ -192,15 +192,15 @@ type HelpUi = {
 const HELP_UI: Record<ChallengeLocale, HelpUi> = {
   de: {
     badge: "Hilfe & Erklärung",
-    heroTitle: "So funktioniert DarePay",
+    heroTitle: "So funktioniert Norek",
     heroText:
       "Hier erfährst du, wie du Challenges findest, unterstützt, selbst teilnimmst und worauf du achten musst, damit dein Versuch gültig ist und im Voting eine echte Chance hat.",
     heroChallenges: "Zu den Challenges",
     heroCreate: "Challenge erstellen",
 
-    section1Title: "1. Was ist DarePay überhaupt?",
+    section1Title: "1. Was ist Norek überhaupt?",
     section1P1:
-      "Auf DarePay kannst du Challenges entdecken, selbst antreten, Challenges unterstützen und mitverfolgen, wie andere Nutzer sich schlagen.",
+      "Auf Norek kannst du Challenges entdecken, selbst antreten, Challenges unterstützen und mitverfolgen, wie andere Nutzer sich schlagen.",
     section1P2:
       "Für dich bedeutet das: Du konsumierst hier nicht einfach nur Inhalte, sondern kannst direkt Teil des Wettbewerbs werden.",
     section1P3:
@@ -226,7 +226,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     step6Text:
       "Am Ende ist das Ergebnis für alle sichtbar. Du kannst sehen, wer gewonnen hat und wie die Challenge ausgegangen ist.",
 
-    section3Title: "3. Was kann ich auf DarePay machen?",
+    section3Title: "3. Was kann ich auf Norek machen?",
     card1Title: "Challenges entdecken",
     card1Text:
       "Du kannst dir laufende und neue Challenges ansehen und prüfen, welche dich interessieren.",
@@ -279,7 +279,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     section7Title: "7. Warum Live oder verifizierte Aufnahme?",
     section7P1: "Damit dein Versuch als echt und nachvollziehbar zählt.",
     section7P2:
-      "Auf DarePay soll nicht einfach irgendein altes, geschnittenes oder bearbeitetes Video als echter Versuch durchgehen. Je nach Challenge musst du deshalb live teilnehmen oder eine verifizierte Aufnahme direkt in der App einreichen.",
+      "Auf Norek soll nicht einfach irgendein altes, geschnittenes oder bearbeitetes Video als echter Versuch durchgehen. Je nach Challenge musst du deshalb live teilnehmen oder eine verifizierte Aufnahme direkt in der App einreichen.",
     section7P3:
       "Für dich bedeutet das: Dein Versuch wirkt glaubwürdiger, andere Nutzer können fairer bewerten und ehrliche Teilnehmer werden nicht durch fragwürdige Clips benachteiligt.",
     section7P4:
@@ -297,7 +297,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
 
     section9Title: "9. Faire Nutzung der Plattform",
     section9Intro:
-      "Damit DarePay fair bleibt, gelten für alle Nutzer klare Regeln:",
+      "Damit Norek fair bleibt, gelten für alle Nutzer klare Regeln:",
     rule1:
       "Reiche keine manipulierten oder zusammengeschnittenen Fake-Versuche ein",
     rule2:
@@ -335,15 +335,15 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
 
   en: {
     badge: "Help & explanation",
-    heroTitle: "How DarePay works",
+    heroTitle: "How Norek works",
     heroText:
       "Here you can learn how to find challenges, support them, participate yourself and what you need to keep in mind so your attempt is valid and has a real chance in voting.",
     heroChallenges: "Go to challenges",
     heroCreate: "Create challenge",
 
-    section1Title: "1. What is DarePay?",
+    section1Title: "1. What is Norek?",
     section1P1:
-      "On DarePay you can discover challenges, compete yourself, support challenges and follow how other users perform.",
+      "On Norek you can discover challenges, compete yourself, support challenges and follow how other users perform.",
     section1P2:
       "For you, that means you are not just consuming content here — you can directly become part of the competition.",
     section1P3:
@@ -369,7 +369,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     step6Text:
       "At the end, the result is visible to everyone. You can see who won and how the challenge ended.",
 
-    section3Title: "3. What can I do on DarePay?",
+    section3Title: "3. What can I do on Norek?",
     card1Title: "Discover challenges",
     card1Text:
       "You can look through ongoing and new challenges and check which ones interest you.",
@@ -422,7 +422,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     section7Title: "7. Why live or verified recording?",
     section7P1: "So your attempt counts as real and traceable.",
     section7P2:
-      "On DarePay, not just any old, edited or manipulated video should pass as a real attempt. Depending on the challenge, you therefore have to participate live or submit a verified recording directly in the app.",
+      "On Norek, not just any old, edited or manipulated video should pass as a real attempt. Depending on the challenge, you therefore have to participate live or submit a verified recording directly in the app.",
     section7P3:
       "For you, that means your attempt is more credible, other users can judge more fairly and honest participants are not disadvantaged by questionable clips.",
     section7P4:
@@ -440,7 +440,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
 
     section9Title: "9. Fair use of the platform",
     section9Intro:
-      "To keep DarePay fair, clear rules apply to all users:",
+      "To keep Norek fair, clear rules apply to all users:",
     rule1:
       "Do not submit manipulated or cut-together fake attempts",
     rule2:
@@ -480,15 +480,15 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
 
   es: {
     badge: "Ayuda y explicación",
-    heroTitle: "Así funciona DarePay",
+    heroTitle: "Así funciona Norek",
     heroText:
       "Aquí puedes ver cómo encontrar retos, apoyarlos, participar tú mismo y en qué debes fijarte para que tu intento sea válido y tenga una oportunidad real en la votación.",
     heroChallenges: "Ir a los retos",
     heroCreate: "Crear reto",
 
-    section1Title: "1. ¿Qué es DarePay?",
+    section1Title: "1. ¿Qué es Norek?",
     section1P1:
-      "En DarePay puedes descubrir retos, competir tú mismo, apoyar retos y seguir cómo se desempeñan otros usuarios.",
+      "En Norek puedes descubrir retos, competir tú mismo, apoyar retos y seguir cómo se desempeñan otros usuarios.",
     section1P2:
       "Para ti eso significa que aquí no solo consumes contenido, sino que puedes convertirte directamente en parte de la competición.",
     section1P3:
@@ -514,7 +514,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     step6Text:
       "Al final, el resultado es visible para todos. Puedes ver quién ha ganado y cómo terminó el reto.",
 
-    section3Title: "3. ¿Qué puedo hacer en DarePay?",
+    section3Title: "3. ¿Qué puedo hacer en Norek?",
     card1Title: "Descubrir retos",
     card1Text:
       "Puedes ver retos nuevos y en marcha y comprobar cuáles te interesan.",
@@ -567,7 +567,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     section7Title: "7. ¿Por qué directo o grabación verificada?",
     section7P1: "Para que tu intento cuente como real y verificable.",
     section7P2:
-      "En DarePay no debería valer como intento real cualquier vídeo antiguo, editado o manipulado. Según el reto, por eso debes participar en directo o enviar una grabación verificada directamente en la app.",
+      "En Norek no debería valer como intento real cualquier vídeo antiguo, editado o manipulado. Según el reto, por eso debes participar en directo o enviar una grabación verificada directamente en la app.",
     section7P3:
       "Para ti eso significa que tu intento resulta más creíble, otros usuarios pueden juzgar con más justicia y los participantes honestos no quedan perjudicados por clips dudosos.",
     section7P4:
@@ -585,7 +585,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
 
     section9Title: "9. Uso justo de la plataforma",
     section9Intro:
-      "Para que DarePay siga siendo justo, se aplican reglas claras a todos los usuarios:",
+      "Para que Norek siga siendo justo, se aplican reglas claras a todos los usuarios:",
     rule1:
       "No envíes intentos falsos manipulados o montados",
     rule2:
@@ -625,15 +625,15 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
 
   fr: {
     badge: "Aide et explication",
-    heroTitle: "Comment fonctionne DarePay",
+    heroTitle: "Comment fonctionne Norek",
     heroText:
       "Ici, tu peux découvrir comment trouver des défis, les soutenir, y participer toi-même et à quoi faire attention pour que ta tentative soit valide et ait une vraie chance lors du vote.",
     heroChallenges: "Voir les défis",
     heroCreate: "Créer un défi",
 
-    section1Title: "1. Qu’est-ce que DarePay ?",
+    section1Title: "1. Qu’est-ce que Norek ?",
     section1P1:
-      "Sur DarePay, tu peux découvrir des défis, participer toi-même, soutenir des défis et suivre la performance des autres utilisateurs.",
+      "Sur Norek, tu peux découvrir des défis, participer toi-même, soutenir des défis et suivre la performance des autres utilisateurs.",
     section1P2:
       "Pour toi, cela signifie que tu ne te contentes pas de consommer du contenu : tu peux directement faire partie de la compétition.",
     section1P3:
@@ -659,7 +659,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     step6Text:
       "À la fin, le résultat est visible pour tous. Tu peux voir qui a gagné et comment le défi s’est terminé.",
 
-    section3Title: "3. Que puis-je faire sur DarePay ?",
+    section3Title: "3. Que puis-je faire sur Norek ?",
     card1Title: "Découvrir des défis",
     card1Text:
       "Tu peux consulter les défis en cours et les nouveaux défis et vérifier lesquels t’intéressent.",
@@ -713,7 +713,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
     section7P1:
       "Pour que ta tentative compte comme réelle et vérifiable.",
     section7P2:
-      "Sur DarePay, il ne faut pas que n’importe quelle vieille vidéo montée ou manipulée passe pour une vraie tentative. Selon le défi, tu dois donc participer en direct ou soumettre un enregistrement vérifié directement dans l’application.",
+      "Sur Norek, il ne faut pas que n’importe quelle vieille vidéo montée ou manipulée passe pour une vraie tentative. Selon le défi, tu dois donc participer en direct ou soumettre un enregistrement vérifié directement dans l’application.",
     section7P3:
       "Pour toi, cela signifie que ta tentative est plus crédible, que les autres utilisateurs peuvent juger plus équitablement et que les participants honnêtes ne sont pas désavantagés par des clips douteux.",
     section7P4:
@@ -731,7 +731,7 @@ const HELP_UI: Record<ChallengeLocale, HelpUi> = {
 
     section9Title: "9. Utilisation équitable de la plateforme",
     section9Intro:
-      "Pour que DarePay reste équitable, des règles claires s’appliquent à tous les utilisateurs :",
+      "Pour que Norek reste équitable, des règles claires s’appliquent à tous les utilisateurs :",
     rule1:
       "N’envoie pas de fausses tentatives manipulées ou montées",
     rule2:

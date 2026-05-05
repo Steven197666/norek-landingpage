@@ -1,7 +1,0 @@
-<Image
-  src="/norek-logo.jpg"
-  alt="NOREK Logo"
-  width={520}
-  height={520}
-  priority
-/>

@@ -51,6 +51,14 @@ type PayoutLinkResponse = {
   expiresAt?: number;
 };
 
+type DepositCheckoutResponse = {
+  checkoutSessionId: string;
+  checkoutUrl?: string | null;
+  amount: string;
+  currency: string;
+  paymentSource: string;
+};
+
 type WalletTab = "transactions" | "supports" | "wins" | "payouts";
 
 function toNumber(v: unknown) {
@@ -93,6 +101,7 @@ export default function WalletPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [payoutAmount, setPayoutAmount] = useState("");
+  const [depositLoading, setDepositLoading] = useState(false);
   const [actionBusy, setActionBusy] = useState(false);
   const [actionMessage, setActionMessage] = useState("");
   const [showPayoutForm, setShowPayoutForm] = useState(false);
@@ -201,6 +210,47 @@ export default function WalletPage() {
       setActionMessage(message || "Auszahlungsanfrage fehlgeschlagen.");
     } finally {
       setActionBusy(false);
+    }
+  };
+
+  const startDepositCheckout = async () => {
+    if (depositLoading) return;
+
+    try {
+      setDepositLoading(true);
+      setActionMessage("");
+
+      const res = await apiFetch(
+        "/wallet/deposit-checkout",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: 10 }),
+        },
+        true
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Wallet-Aufladung konnte nicht gestartet werden.");
+      }
+
+      const data = (await res.json()) as DepositCheckoutResponse;
+      const checkoutUrl = String(data?.checkoutUrl ?? "").trim();
+
+      if (!checkoutUrl) {
+        throw new Error("Es konnte kein Weiterleitungslink fuer die Wallet-Aufladung erstellt werden.");
+      }
+
+      window.location.href = checkoutUrl;
+    } catch (e) {
+      const rawMessage = e instanceof Error ? e.message : "Wallet-Aufladung konnte nicht gestartet werden.";
+      const message = rawMessage === "NO_TOKEN" || rawMessage === "UNAUTHORIZED"
+        ? "Bitte melde dich erneut an."
+        : rawMessage || "Wallet-Aufladung konnte nicht gestartet werden.";
+      setActionMessage(message);
+    } finally {
+      setDepositLoading(false);
     }
   };
 
@@ -345,13 +395,11 @@ export default function WalletPage() {
           <div className="mt-4 grid grid-cols-2 gap-2 md:mt-6 md:gap-3">
             <button
               type="button"
-              onClick={() => {
-                setActionMessage("Einzahlen erfolgt aktuell über den Support-Checkout einer Challenge.");
-                router.push("/challenges");
-              }}
-              className="h-10 rounded-xl bg-[#2F78FF] text-[13px] font-bold text-white md:h-12 md:text-[15px]"
+              onClick={startDepositCheckout}
+              disabled={depositLoading}
+              className="h-10 rounded-xl bg-[#2F78FF] text-[13px] font-bold text-white disabled:opacity-60 md:h-12 md:text-[15px]"
             >
-              Einzahlen
+              {depositLoading ? "Weiterleitung..." : "Einzahlen"}
             </button>
             <button
               type="button"

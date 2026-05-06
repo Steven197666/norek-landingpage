@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "@/lib/api";
 import PrimaryButton from "@/components/ui/PrimaryButton";
+import PublicProfileView from "@/components/profile/PublicProfileView";
 
 type ChallengeLocale = "de" | "en" | "es" | "fr";
 
@@ -497,64 +498,46 @@ export default function PublicProfilePage() {
   const username = useMemo(() => raw.trim(), [raw]);
 
   const activeLocale = useMemo(() => getActiveChallengeLocale(), []);
-  const ui = useMemo(
-    () => PUBLIC_PROFILE_UI[activeLocale] ?? PUBLIC_PROFILE_UI.de,
-    [activeLocale]
-  );
-
   const [data, setData] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!username) return;
-
     if (!isValidUsername(username)) {
       setLoading(false);
       setData(null);
-      setError(ui.invalidUsername);
+      setError(PUBLIC_PROFILE_UI[activeLocale]?.invalidUsername || "Invalid username.");
       return;
     }
-
     let cancelled = false;
-
     (async () => {
       try {
         setError("");
         setLoading(true);
-
         const res = await apiFetch(
           `/users/${username}/public`,
           { method: "GET" },
           false
         );
-
         if (!res.ok) {
           const txt = await res.text().catch(() => "");
-          throw new Error(txt || ui.profileLoadFailed);
+          throw new Error(txt || PUBLIC_PROFILE_UI[activeLocale]?.profileLoadFailed || "Could not load profile.");
         }
-
-        const json = (await res.json()) as Profile;
+        const json = await res.json();
         if (!cancelled) setData(json);
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message ?? ui.profileLoadFailed);
+      } catch (e) {
+        if (!cancelled) setError((e && (e as any).message) || PUBLIC_PROFILE_UI[activeLocale]?.profileLoadFailed || "Could not load profile.");
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
-
     return () => {
       cancelled = true;
     };
-  }, [username, ui]);
+  }, [username, activeLocale]);
 
-  const createdChallengesSorted = useMemo(() => {
-    const list = data?.challenges ? [...data.challenges] : [];
-    return list.sort((a, b) => n(b.score) - n(a.score));
-  }, [data]);
-
-  const totalVisible = createdChallengesSorted.length;
-
+  // isOwnProfile kann hier nicht sicher bestimmt werden, daher false
   return (
     <main className="min-h-[calc(100vh-64px)] bg-slate-950">
       <div className="mx-auto max-w-[1400px] px-6 py-6">
@@ -587,13 +570,13 @@ export default function PublicProfilePage() {
         {!loading && error && (
           <div className="rounded-[32px] border border-red-200 bg-red-50 p-6 shadow-sm">
             <div className="text-lg font-extrabold text-slate-900">
-              {ui.profileTitle}
+              {PUBLIC_PROFILE_UI[activeLocale]?.profileTitle || "Profile"}
             </div>
             <div className="mt-2 font-semibold text-red-700">{error}</div>
             <div className="mt-4">
               <Link href="/challenges">
                 <PrimaryButton variant="secondary">
-                  {ui.backToChallenges}
+                  {PUBLIC_PROFILE_UI[activeLocale]?.backToChallenges || "← Back to challenges"}
                 </PrimaryButton>
               </Link>
             </div>
@@ -601,134 +584,7 @@ export default function PublicProfilePage() {
         )}
 
         {!loading && !error && data && (
-          <>
-            <div className="mb-8 rounded-[36px] border border-white/10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-7 shadow-2xl ring-1 ring-white/10">
-              <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap gap-2">
-                    <span className="inline-flex rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-blue-300">
-                      {ui.publicProfile}
-                    </span>
-                    <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-300">
-                      {ui.statsAndChallenges}
-                    </span>
-                  </div>
-
-                  <div className="mt-5 flex items-center gap-5">
-                    <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-[28px] border border-white/10 bg-white/10 text-3xl font-extrabold text-white shadow-lg">
-                      {initials(data.username)}
-                    </div>
-
-                    <div className="min-w-0">
-                      <h1 className="truncate text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-                        @{data.username}
-                      </h1>
-
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <span className="inline-flex rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-200">
-                          {ui.level} {Number(data.level ?? 1)}
-                        </span>
-                        <span className="inline-flex rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-blue-200">
-                          {data.levelTitle ?? ui.newHere}
-                        </span>
-                        <span className="inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-emerald-200">
-                          {Number(data.totalXp ?? 0)} XP
-                        </span>
-                      </div>
-
-                      <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300 sm:text-base">
-                        {ui.overviewText}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2 xl:justify-end">
-                  <Link href="/challenges">
-                    <PrimaryButton variant="secondary">
-                      {ui.challengesShort}
-                    </PrimaryButton>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <StatCard label={ui.level} value={n(data.level)} accent="info" />
-                <StatCard
-                  label={ui.title}
-                  value={data.levelTitle ?? ui.newHere}
-                  accent="neutral"
-                />
-                <StatCard
-                  label={ui.xp}
-                  value={n(data.totalXp)}
-                  accent="warning"
-                />
-                <StatCard label={ui.created} value={n(data.stats.created)} accent="info" />
-                <StatCard
-                  label={ui.completed}
-                  value={n(data.stats.completed)}
-                  accent="success"
-                />
-                <StatCard
-                  label={ui.voteScoreTotal}
-                  value={n(data.stats.voteScoreTotal)}
-                  accent="neutral"
-                />
-                <StatCard label={ui.supports} value={n(data.stats.supportCount)} accent="warning" />
-                <StatCard
-                  label={ui.wonChallenges}
-                  value={n(data.stats.completedWins ?? 0)}
-                  accent="success"
-                />
-              </div>
-            </div>
-
-            <div className="rounded-[32px] border border-white/10 bg-white p-7 shadow-2xl ring-1 ring-black/5">
-              <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                  <div className="text-2xl font-extrabold tracking-tight text-slate-900">
-                    {ui.challengesTitle}
-                  </div>
-                  <div className="mt-1 text-sm text-slate-600">
-                    {createdChallengesSorted.length
-                      ? ui.sortedByVoteScore
-                      : ui.noCreatedChallengesYet}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 flex flex-wrap items-center gap-2">
-                <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-extrabold text-slate-700">
-                  {ui.visible}: {totalVisible}
-                </div>
-
-                <div className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-extrabold text-blue-800">
-                  {ui.createdContent}
-                </div>
-              </div>
-
-              <div className="mt-6">
-                {createdChallengesSorted.length === 0 ? (
-                  <EmptyHint
-                    title={ui.noChallengesTitle}
-                    text={ui.noChallengesText}
-                  />
-                ) : (
-                  <div className="grid gap-4">
-                    {createdChallengesSorted.map((c) => (
-                      <ChallengeRow
-                        key={c.id}
-                        c={c}
-                        locale={activeLocale}
-                        ui={ui}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
+          <PublicProfileView profile={data} locale={activeLocale} isOwnProfile={false} />
         )}
       </div>
     </main>

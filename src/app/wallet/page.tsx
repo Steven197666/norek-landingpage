@@ -492,7 +492,7 @@ export default function WalletPage() {
                     disabled={payoutSetupAction !== ""}
                     className="h-10 rounded-xl border border-white/10 bg-white/[0.05] px-4 text-sm font-bold text-white disabled:opacity-60"
                   >
-                    {payoutSetupAction === "dashboard" ? "Wird geoeffnet..." : "Stripe-Dashboard oeffnen"}
+                    {payoutSetupAction === "dashboard" ? "Wird geoeffnet..." : "Auszahlungskonto verwalten"}
                   </button>
                 ) : null}
               </div>

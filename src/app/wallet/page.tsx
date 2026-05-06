@@ -276,12 +276,24 @@ export default function WalletPage() {
 
           <div className="mt-3 grid grid-cols-2 gap-2 md:gap-3">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2.5 md:p-3.5">
-              <div className="text-[10px] uppercase tracking-wide text-slate-500 md:text-[11px]">Ausstehend</div>
-              <div className="mt-1 text-[15px] font-extrabold text-slate-100 md:text-[22px]">{formatMoney(pending, locale)}</div>
+              <div className="text-[10px] uppercase tracking-wide text-slate-500 md:text-[11px]">Verfügbar</div>
+              <div className="mt-1 text-[15px] font-extrabold text-slate-100 md:text-[22px]">{formatMoney(available, locale)}</div>
+              <div className="text-[11px] text-slate-400 md:text-[12px]">Für Supports & Challenges</div>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2.5 md:p-3.5">
-              <div className="text-[10px] uppercase tracking-wide text-slate-500 md:text-[11px]">Auszahlung</div>
+              <div className="text-[10px] uppercase tracking-wide text-slate-500 md:text-[11px]">Ausstehend</div>
+              <div className="mt-1 text-[15px] font-extrabold text-slate-100 md:text-[22px]">{formatMoney(pending, locale)}</div>
+              <div className="text-[11px] text-slate-400 md:text-[12px]">Noch nicht freigegeben</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2.5 md:p-3.5">
+              <div className="text-[10px] uppercase tracking-wide text-slate-500 md:text-[11px]">Verdient</div>
+              <div className="mt-1 text-[15px] font-extrabold text-slate-100 md:text-[22px]">{formatMoney(earned, locale)}</div>
+              <div className="text-[11px] text-slate-400 md:text-[12px]">Insgesamt erhalten</div>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2.5 md:p-3.5">
+              <div className="text-[10px] uppercase tracking-wide text-slate-500 md:text-[11px]">Ausgezahlt</div>
               <div className="mt-1 text-[15px] font-extrabold text-slate-100 md:text-[22px]">{formatMoney(paidOut, locale)}</div>
+              <div className="text-[11px] text-slate-400 md:text-[12px]">Bereits ausgezahlt</div>
             </div>
           </div>
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
+import MobileTopBar from "@/components/mobile/MobileTopBar";
 
 type WalletOverview = {
   id: string;
@@ -201,6 +202,10 @@ export default function WalletPage() {
 
   return (
     <main className="min-h-screen bg-[#040b16] px-4 pb-24 pt-4 text-slate-100 md:px-8 md:pt-8">
+      {/* MobileTopBar nur mobil sichtbar */}
+      <div className="md:hidden">
+        <MobileTopBar title="Wallet" onRefresh={loadWallet} />
+      </div>
       <div className="mx-auto max-w-[440px] md:max-w-[760px]">
         <div className="rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,#091427_0%,#061024_100%)] p-4 shadow-[0_24px_70px_rgba(0,0,0,0.5)] md:rounded-[34px] md:p-7">
           <div className="flex items-center justify-between">

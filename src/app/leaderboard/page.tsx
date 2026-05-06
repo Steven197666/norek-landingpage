@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import NotificationsBell from "@/components/NotificationsBell";
+import MobileTopBar from "@/components/mobile/MobileTopBar";
 
 type ChallengeLocale = "de" | "en" | "es" | "fr";
 type LeaderboardType = "creators" | "challenges" | "supporters";

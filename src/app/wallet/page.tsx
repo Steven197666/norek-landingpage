@@ -45,6 +45,12 @@ type PayoutSetupStatus = {
   requirementsPastDue: string[];
 };
 
+type PayoutLinkResponse = {
+  stripeAccountId: string;
+  url?: string | null;
+  expiresAt?: number;
+};
+
 type WalletTab = "transactions" | "supports" | "wins" | "payouts";
 
 function toNumber(v: unknown) {
@@ -82,6 +88,8 @@ export default function WalletPage() {
   const [payoutSetup, setPayoutSetup] = useState<PayoutSetupStatus | null>(null);
   const [payoutSetupLoading, setPayoutSetupLoading] = useState(false);
   const [payoutSetupError, setPayoutSetupError] = useState("");
+  const [payoutSetupAction, setPayoutSetupAction] = useState<"" | "onboarding" | "dashboard">("");
+  const [payoutSetupActionError, setPayoutSetupActionError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [payoutAmount, setPayoutAmount] = useState("");
@@ -193,6 +201,66 @@ export default function WalletPage() {
       setActionMessage(message || "Auszahlungsanfrage fehlgeschlagen.");
     } finally {
       setActionBusy(false);
+    }
+  };
+
+  const startPayoutOnboarding = async () => {
+    if (payoutSetupAction) return;
+
+    try {
+      setPayoutSetupAction("onboarding");
+      setPayoutSetupActionError("");
+
+      const res = await apiFetch("/payments/me/payout-onboarding-link", { method: "POST" }, true);
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Auszahlungseinrichtung konnte nicht gestartet werden.");
+      }
+
+      const data = (await res.json()) as PayoutLinkResponse;
+      const url = String(data?.url ?? "").trim();
+
+      if (!url) {
+        throw new Error("Es wurde kein gueltiger Link fuer die Auszahlungseinrichtung bereitgestellt.");
+      }
+
+      window.location.href = url;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Auszahlungseinrichtung konnte nicht gestartet werden.";
+      setPayoutSetupActionError(message || "Auszahlungseinrichtung konnte nicht gestartet werden.");
+    } finally {
+      setPayoutSetupAction("");
+    }
+  };
+
+  const openPayoutDashboard = async () => {
+    if (payoutSetupAction) return;
+
+    try {
+      setPayoutSetupAction("dashboard");
+      setPayoutSetupActionError("");
+
+      const res = await apiFetch("/payments/me/payout-dashboard-link", { method: "POST" }, true);
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Stripe-Dashboard konnte nicht geoeffnet werden.");
+      }
+
+      const data = (await res.json()) as PayoutLinkResponse;
+      const url = String(data?.url ?? "").trim();
+
+      if (!url) {
+        throw new Error("Es wurde kein gueltiger Link fuer das Stripe-Dashboard bereitgestellt.");
+      }
+
+      window.location.href = url;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Stripe-Dashboard konnte nicht geoeffnet werden.";
+      setPayoutSetupActionError(message || "Stripe-Dashboard konnte nicht geoeffnet werden.");
+    } finally {
+      setPayoutSetupAction("");
     }
   };
 
@@ -404,10 +472,46 @@ export default function WalletPage() {
               </div>
             ) : null}
 
+            {payoutSetup && !payoutSetupLoading ? (
+              <div className="mt-3 flex flex-col gap-2 md:flex-row">
+                {!payoutSetup.hasStripeAccount || !payoutSetup.onboardingComplete ? (
+                  <button
+                    type="button"
+                    onClick={startPayoutOnboarding}
+                    disabled={payoutSetupAction !== ""}
+                    className="h-10 rounded-xl bg-[#2F78FF] px-4 text-sm font-bold text-white disabled:opacity-60"
+                  >
+                    {payoutSetupAction === "onboarding" ? "Wird geoeffnet..." : "Auszahlung einrichten"}
+                  </button>
+                ) : null}
+
+                {payoutSetup.hasStripeAccount ? (
+                  <button
+                    type="button"
+                    onClick={openPayoutDashboard}
+                    disabled={payoutSetupAction !== ""}
+                    className="h-10 rounded-xl border border-white/10 bg-white/[0.05] px-4 text-sm font-bold text-white disabled:opacity-60"
+                  >
+                    {payoutSetupAction === "dashboard" ? "Wird geoeffnet..." : "Stripe-Dashboard oeffnen"}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+
+            {payoutSetup && !payoutSetupLoading && !payoutSetup.payoutsEnabled ? (
+              <div className="mt-3 text-xs text-amber-200/90">
+                Auszahlungen sind noch nicht vollstaendig aktiviert.
+              </div>
+            ) : null}
+
             {payoutSetupError ? (
               <div className="mt-3 text-xs text-amber-200/90">
                 Status der Auszahlungseinrichtung konnte nicht geladen werden.
               </div>
+            ) : null}
+
+            {payoutSetupActionError ? (
+              <div className="mt-3 text-xs text-rose-200/90">{payoutSetupActionError}</div>
             ) : null}
           </div>
 

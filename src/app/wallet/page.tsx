@@ -31,6 +31,20 @@ type WalletTx = {
   createdAt: string;
 };
 
+type PayoutSetupStatus = {
+  hasStripeAccount: boolean;
+  stripeAccountId: string | null;
+  onboardingComplete: boolean;
+  payoutsEnabled: boolean;
+  detailsSubmitted: boolean;
+  chargesEnabled: boolean;
+  defaultCurrency: string | null;
+  country: string | null;
+  requirementsCurrentlyDue: string[];
+  requirementsEventuallyDue: string[];
+  requirementsPastDue: string[];
+};
+
 type WalletTab = "transactions" | "supports" | "wins" | "payouts";
 
 function toNumber(v: unknown) {
@@ -65,6 +79,9 @@ export default function WalletPage() {
   const router = useRouter();
   const [wallet, setWallet] = useState<WalletOverview | null>(null);
   const [transactions, setTransactions] = useState<WalletTx[]>([]);
+  const [payoutSetup, setPayoutSetup] = useState<PayoutSetupStatus | null>(null);
+  const [payoutSetupLoading, setPayoutSetupLoading] = useState(false);
+  const [payoutSetupError, setPayoutSetupError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [payoutAmount, setPayoutAmount] = useState("");
@@ -83,9 +100,29 @@ export default function WalletPage() {
   }, []);
 
   const loadWallet = useCallback(async () => {
-    const [walletRes, txRes] = await Promise.all([
+    setPayoutSetupLoading(true);
+    setPayoutSetupError("");
+
+    const [walletRes, txRes, payoutSetupResult] = await Promise.all([
       apiFetch("/wallet/me", { method: "GET" }, true),
       apiFetch("/wallet/transactions?limit=40", { method: "GET" }, true),
+      (async () => {
+        try {
+          const res = await apiFetch("/payments/me/payout-setup-status", { method: "GET" }, true);
+
+          if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || "Status der Auszahlungseinrichtung konnte nicht geladen werden.");
+          }
+
+          const json = (await res.json()) as PayoutSetupStatus;
+
+          return { data: json, error: "" };
+        } catch (e) {
+          const message = e instanceof Error ? e.message : "Status der Auszahlungseinrichtung konnte nicht geladen werden.";
+          return { data: null, error: message || "Status der Auszahlungseinrichtung konnte nicht geladen werden." };
+        }
+      })(),
     ]);
 
     if (!walletRes.ok) {
@@ -101,6 +138,10 @@ export default function WalletPage() {
 
     setWallet(walletJson);
     setTransactions(Array.isArray(txJson) ? txJson : []);
+
+    setPayoutSetup(payoutSetupResult.data);
+    setPayoutSetupError(payoutSetupResult.error);
+    setPayoutSetupLoading(false);
   }, []);
 
   useEffect(() => {
@@ -159,6 +200,7 @@ export default function WalletPage() {
   const pending = toNumber(wallet?.pendingBalance);
   const earned = toNumber(wallet?.totalEarned);
   const paidOut = toNumber(wallet?.totalPaidOut);
+  const openPayoutRequirements = payoutSetup?.requirementsCurrentlyDue.length ?? 0;
 
   const tabs: Array<{ id: WalletTab; label: string }> = [
     { id: "transactions", label: "Transaktionen" },
@@ -295,6 +337,78 @@ export default function WalletPage() {
               <div className="mt-1 text-[15px] font-extrabold text-slate-100 md:text-[22px]">{formatMoney(paidOut, locale)}</div>
               <div className="text-[11px] text-slate-400 md:text-[12px]">Bereits ausgezahlt</div>
             </div>
+          </div>
+
+          <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 md:mt-4 md:p-4">
+            <div className="text-[13px] font-extrabold text-white md:text-[15px]">Auszahlungseinrichtung</div>
+
+            <div className="mt-3 space-y-2 text-[12px] text-slate-200 md:text-[13px]">
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#081327] px-3 py-2">
+                <span className="text-slate-300">Stripe-Konto</span>
+                <span
+                  className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${
+                    payoutSetup?.hasStripeAccount
+                      ? "border-emerald-300/30 bg-emerald-500/15 text-emerald-100"
+                      : "border-amber-300/30 bg-amber-500/15 text-amber-100"
+                  }`}
+                >
+                  {payoutSetupLoading
+                    ? "Wird geladen"
+                    : payoutSetup?.hasStripeAccount
+                      ? "Eingerichtet"
+                      : "Nicht eingerichtet"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#081327] px-3 py-2">
+                <span className="text-slate-300">Onboarding</span>
+                <span
+                  className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${
+                    payoutSetup?.onboardingComplete
+                      ? "border-emerald-300/30 bg-emerald-500/15 text-emerald-100"
+                      : "border-amber-300/30 bg-amber-500/15 text-amber-100"
+                  }`}
+                >
+                  {payoutSetupLoading
+                    ? "Wird geladen"
+                    : payoutSetup?.onboardingComplete
+                      ? "Abgeschlossen"
+                      : "Offen"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#081327] px-3 py-2">
+                <span className="text-slate-300">Auszahlungen</span>
+                <span
+                  className={`rounded-full border px-2.5 py-1 text-[11px] font-bold ${
+                    payoutSetup?.payoutsEnabled
+                      ? "border-emerald-300/30 bg-emerald-500/15 text-emerald-100"
+                      : "border-rose-300/30 bg-rose-500/15 text-rose-100"
+                  }`}
+                >
+                  {payoutSetupLoading
+                    ? "Wird geladen"
+                    : payoutSetup?.payoutsEnabled
+                      ? "Aktiv"
+                      : "Nicht aktiv"}
+                </span>
+              </div>
+            </div>
+
+            {openPayoutRequirements > 0 ? (
+              <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+                <div>Es fehlen noch Angaben fuer die Auszahlungseinrichtung.</div>
+                <div className="mt-1 text-amber-50/80">
+                  {openPayoutRequirements} offene Angabe{openPayoutRequirements === 1 ? "" : "n"}
+                </div>
+              </div>
+            ) : null}
+
+            {payoutSetupError ? (
+              <div className="mt-3 text-xs text-amber-200/90">
+                Status der Auszahlungseinrichtung konnte nicht geladen werden.
+              </div>
+            ) : null}
           </div>
 
           {actionMessage ? <div className="mt-3 text-xs text-slate-300">{actionMessage}</div> : null}

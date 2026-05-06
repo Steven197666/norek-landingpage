@@ -183,6 +183,11 @@ export default function WalletPage() {
       return;
     }
 
+    if (payoutSetup && payoutSetup.payoutsEnabled !== true) {
+      setActionMessage("Auszahlungen sind noch nicht aktiv. Bitte richte zuerst dein Auszahlungskonto ein.");
+      return;
+    }
+
     try {
       setActionBusy(true);
       setActionMessage("");
@@ -423,12 +428,30 @@ export default function WalletPage() {
                 <button
                   type="button"
                   onClick={onRequestPayout}
-                  disabled={actionBusy}
+                  disabled={actionBusy || payoutSetupLoading || !!payoutSetup && payoutSetup.payoutsEnabled !== true}
                   className="h-10 rounded-lg border border-blue-300/30 bg-blue-500/20 px-3 text-xs font-bold text-blue-100 disabled:opacity-60"
                 >
                   Senden
                 </button>
               </div>
+
+              {payoutSetupLoading ? (
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-300">
+                  Auszahlungsstatus wird geprueft...
+                </div>
+              ) : null}
+
+              {payoutSetup && payoutSetup.payoutsEnabled !== true ? (
+                <div className="mt-3 rounded-xl border border-amber-300/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+                  Auszahlungen sind noch nicht aktiv. Bitte richte zuerst dein Auszahlungskonto ein.
+                </div>
+              ) : null}
+
+              {payoutSetupError ? (
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-300">
+                  Der Auszahlungsstatus konnte nicht geprueft werden.
+                </div>
+              ) : null}
             </div>
           ) : null}
 
